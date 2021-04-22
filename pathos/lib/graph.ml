@@ -8,13 +8,34 @@
 (*                                                             *)
 (** * * * ** ** * * * * * * * ** * * * ** * * * * * * * * * * **)
 
-type vertex = int
-type graph = vertex array array
+type node = { identifier: int; distance: int }
+type graph = { edges: int array array; nodes: node array }
 
 let create (n: int) =
-    Array.make_matrix n n 0
+    let edges = Array.make_matrix n n 0 in
+    let nodes = Array.init n (fun k -> { identifier = k; distance = -1 }) in
+    { edges = edges; nodes = nodes }
 
-let size = Array.length
+let size (g: graph) =
+    Array.length g.nodes
 
-let add_edge (g: graph) (a: int) (b: int) (f: vertex) =
-    g.(a).(b) <- f
+let add_edge (g: graph) (a: node) (b: node) (f: int) =
+    g.edges.(a.identifier).(b.identifier) <- f
+
+let del_edge (g: graph) (a: node) (b: node) =
+    g.edges.(a.identifier).(b.identifier) <- 0
+
+let get_edge (g: graph) (a: node) (b: node) =
+    g.edges.(a.identifier).(b.identifier)
+
+let get_adj (g: graph) (nd: node) =
+    let ext = g.edges.(nd.identifier) in (* edges incident externally to v *)
+    let max = (Array.length ext) - 1 in (* nodes number *)
+    let rec get_adj_aux (i: int) (acc: node list) =
+        let l = if ext.(i) <> 0 then (g.nodes.(i) :: acc)
+                else acc
+        in
+        if i = max then l
+        else get_adj_aux (i + 1) l
+    in
+    get_adj_aux 0 []
