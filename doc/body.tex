@@ -1,0 +1,141 @@
+% Base file
+% Based on a template made by Chris Hoofnagle
+% Modified by Gabriel Santamaria <gaby.santamaria@outlook.fr>
+% 2021
+
+\documentclass[letterpaper, 12pt, openbib]{report}
+\usepackage[utf8]{inputenc}
+
+\usepackage{graphicx}
+\usepackage[most, many, skins, breakable]{tcolorbox}
+
+% TikZ
+\usepackage{tikz}
+\usepackage{tikzpagenodes}
+\tcbuselibrary{skins,breakable,xparse}
+
+% Hiding red boxes on the final PDF
+\usepackage[hidelinks]{hyperref}
+
+% Global spacing between edges
+\usepackage[hmargin=1.25cm, vmargin=1.25cm]{geometry}
+
+% Bibliography
+\usepackage[backend=biber, language=english, style=verbose]{biblatex}
+\addbibresource{bibliography.bib}
+
+
+%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-% 
+%                                                                     %
+% Global document colors                                              %
+% Color scheme generated with https://coolors.co/                     %
+%                                                                     %
+%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%
+
+\usepackage{xcolor}
+
+\definecolor{black-chocolate}{HTML}{141204}
+\definecolor{pine-tree}{HTML}{262A10}
+\definecolor{cafe-noir}{HTML}{54442B}
+\definecolor{brown-sugar}{HTML}{A9714B}
+\definecolor{persian-orange}{HTML}{E8985E}
+
+%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-% 
+%                                                                     %
+% Heading controls                                                    %
+% Controls heading colors, fonts and other stuff                      %
+%                                                                     %
+%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%
+
+\usepackage{fancyhdr}
+
+\fancyhf{}
+\small\fancyhead[R] {\color{black-chocolate}The pathos Project ~ \thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+
+%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-% 
+%                                                                     %
+% Title controls                                                      %
+% Controls title colors and display                                   %
+%                                                                     %
+%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%
+
+\usepackage{titlesec}
+\usepackage{fontspec}
+
+\titleformat{\chapter}{\fontsize{30}{60}\headingfont}{\color{black-chocolate}\thechapter\fontsize{90}{60}}{10pt}{\thispagestyle{empty}\color{black-chocolate}\Huge\bfseries}
+\titleformat{\section}{\Large\headingfont}{}{0pt}{\color{black-chocolate}{\thesection} \ }[{\titlerule[0.8pt]}]
+\titleformat{\subsection}{\large\headingfont}{}{0pt}{\color{black-chocolate}{\thesubsection} \ }[{\titlerule[0.8pt]}]
+
+\titleformat{name=\section,numberless}
+{\Large\headingfont}{}{-4pt}{\color{black-chocolate} \ }[{\titlerule[0.8pt]}]
+\titleformat{name=\subsection,numberless}
+{\large\headingfont}{}{-4pt}{\color{black-chocolate} \ }[{\titlerule[0.8pt]}]
+
+%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-% 
+%                                                                     %
+% mdframe controls                                                    %
+% Controls title colors and display                                   %
+%                                                                     %
+%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%
+
+\usepackage{amstext}
+\usepackage{mathtools}
+\usepackage[framemethod=TikZ]{mdframed}
+
+\mdfdefinestyle{custom}{
+    frametitle = {
+        \colorbox{black-chocolate}{
+            \space You must specify a title for your box \space
+        }
+    },
+    frametitlefont = \textbf,
+    backgroundcolor = brown-sugar!20,
+    linecolor = persian-orange!70,
+    innertopmargin = 12pt,
+    frametitleaboveskip = -\ht\strutbox,
+    skipabove = \topskip,
+    skipbelow = \topskip
+}
+
+%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-% 
+%                                                                     %
+% tcolorbox controls                                                  %
+% Controls title colors and display                                   %
+%                                                                     %
+%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%
+
+\newtcolorbox{custom}[2][]{
+    enhanced, interior hidden, 
+    coltitle = black, fonttitle=\bfseries\headingfont\large,
+    attach boxed title to top left = {yshift = -2.5mm},
+    boxed title style = { empty, size = small, top = 1mm, bottom = 2pt },
+    frame code = {
+        \path (title.east|-frame.north) coordinate (aux);
+        \path[draw = founderblue, fill = founderblue!20, line width = 0.5mm, rounded corners]
+        (frame.west) |- ([xshift=-2.5mm]title.north east) to[out = 0, in = 180] ([xshift = 7.5mm]aux)-|(frame.east)|-(frame.south)-|cycle;  
+    },
+    title = {#2},#1
+}
+
+%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%
+%%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%%
+%%                                                                     %%
+%%                           DOCUMENT START                            %%
+%% The actual document                                                 %%
+%%                                                                     %%
+%%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%%
+%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%
+
+\title{Put title here, and in the title.tex file}
+
+\begin{document}
+    \include{titlepage}
+
+    \pagecolor{white}
+    \addcontentsline{toc}{chapter}{Executive Summary}
+
+    \include{libraries/graph.tex}    
+
+    \printbibliography
+\end{document}
