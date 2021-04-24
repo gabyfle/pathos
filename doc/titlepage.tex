@@ -1,0 +1,32 @@
+% Title page file
+% Based on a template made by Chris Hoofnagle
+% Modified by Gabriel Santamaria <gaby.santamaria@outlook.fr>
+% 2021
+
+\begin{titlepage}
+    \pagecolor{pine-tree}
+    \vspace*{4cm}
+
+    \begin{center}
+        {\color{white}
+            \fontsize{40}{60}\selectfont Pathos\\[0.5in]
+            \fontsize{18}{60}\selectfont Une tentative de génération de plan d'évacuation en temps réel
+        }
+    \end{center}
+
+    % Images
+    \tikz[overlay, remember picture] \node at (9, -3) {
+        \includegraphics[width=0.2\textwidth]{images/graph_skeleton.png}
+    };
+
+    \tikz[overlay, remember picture] \node at (12, 3.5) {
+        \includegraphics[width=0.075\textwidth]{images/ocaml_logo.png}
+    };
+
+    \vspace*{12cm}
+
+    {\color{white}
+        \fontsize{13}{20}par Gabriel Santamaria
+    }
+
+\end{titlepage}
