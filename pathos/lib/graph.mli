@@ -36,6 +36,7 @@ val get_edge: graph -> node -> node -> int
  * Returns the adjacent nodes of v in g *)
 val get_adj: graph -> node -> node list
 
-(* Graph.breadth_first g 
- * Breadth-first search algorithm *)
-val breadth_first: graph -> unit
+(* Graph.bfs g n func
+ * Breadth-first search algorithm 
+ * Applies the given function to each encountred node and its successor *)
+val bfs: graph -> node -> (node -> node -> unit) -> unit

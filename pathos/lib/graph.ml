@@ -39,3 +39,26 @@ let get_adj (g: graph) (nd: node) =
         else get_adj_aux (i + 1) l
     in
     get_adj_aux 0 []
+
+let bfs (g: graph) (root: node) (func: node -> node -> unit) =
+    let q = Queue.create () in
+
+    let black = Array.make (size g) false in (* Parallel table to know if a node has already been explored or not *)
+    
+    let rec loop u =
+        if not (Queue.is_empty q) then
+            let n = Queue.take q in
+            let adj = get_adj g n in
+            
+            List.iter (fun w ->
+                if not black.(w.key) then begin
+                    func n w;
+                    Queue.add w q;
+                end
+            ) adj;
+
+            black.(n.key) <- true;
+        else
+            u
+    in
+    loop ()
