@@ -42,6 +42,7 @@ let get_adj (g: graph) (nd: node) =
 
 let bfs (g: graph) (root: node) (func: node -> node -> unit) =
     let q = Queue.create () in
+    Queue.add root q;
 
     let black = Array.make (size g) false in (* Parallel table to know if a node has already been explored or not *)
     
@@ -58,6 +59,8 @@ let bfs (g: graph) (root: node) (func: node -> node -> unit) =
             ) adj;
 
             black.(n.key) <- true;
+
+            loop ()
         else
             u
     in
