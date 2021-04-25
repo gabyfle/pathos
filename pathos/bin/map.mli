@@ -6,8 +6,7 @@
 (* An attempt to generate evacuation plan in real time                        *)
 (* @author Gabriel Santamaria <gaby.santamaria@outlook.fr>                    *)
 (*                                                                            *)
-(* File: main.ml                                                              *)
+(* File: map.mli                                                              *)
+(* Description: Map data handling functions and algorithms                    *)
 (*                                                                            *)
 (*.-.. --- ...- . -..  /  .--. .- - .... --- ...  / .--. .-. --- .--- . -.-. -*)
-
-open Pathos

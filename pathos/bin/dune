@@ -1,4 +1,4 @@
 (executable
  (public_name pathos)
  (name main)
- (libraries pathos))
+ (libraries pathos xmlm))
