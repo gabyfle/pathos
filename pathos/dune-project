@@ -1,2 +1,7 @@
 (lang dune 2.8)
 (name pathos)
+(generate_opam_files true)
+
+(source (github gabyfle/pathos))
+(authors "Gabriel Santamaria")
+(maintainers "gabriel.santamaria@gabyfle.me")
