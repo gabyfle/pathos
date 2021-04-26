@@ -31,7 +31,7 @@ jobs:
         with:
           ocaml-version: ${{ matrix.ocaml-version }}
 
-      - run: opam pin add pathos.dev . --no-action
+      - run: opam pin add pathos . --no-action
         working-directory: ${{ env.working-directory }}
       - run: opam depext pathos --yes --with-doc --with-test
         working-directory: ${{ env.working-directory }}
