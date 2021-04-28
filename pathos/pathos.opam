@@ -6,6 +6,8 @@ homepage: "https://github.com/gabyfle/pathos"
 bug-reports: "https://github.com/gabyfle/pathos/issues"
 depends: [
   "dune" {>= "2.8"}
+  "ocaml" {>= "4.12.0"}
+  "xmlm"
   "odoc" {with-doc}
 ]
 build: [

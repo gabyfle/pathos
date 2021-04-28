@@ -5,3 +5,11 @@
 (source (github gabyfle/pathos))
 (authors "Gabriel Santamaria")
 (maintainers "gabriel.santamaria@gabyfle.me")
+
+(package
+    (name pathos)
+    (depends
+        (ocaml
+            (and
+                (>= "4.12.0")))
+        xmlm))
