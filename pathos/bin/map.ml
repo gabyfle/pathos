@@ -10,3 +10,5 @@
 (* Description: Map data handling functions and algorithms                    *)
 (*                                                                            *)
 (*.-.. --- ...- . -..  /  .--. .- - .... --- ...  / .--. .-. --- .--- . -.-. -*)
+
+open Xmlm

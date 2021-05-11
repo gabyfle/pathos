@@ -10,4 +10,7 @@
 (*                                                                            *)
 (*.-.. --- ...- . -..  /  .--. .- - .... --- ...  / .--. .-. --- .--- . -.-. -*)
 
-let () = print_endline "This is still in development."
+external plus : int -> int -> int = "display_numbers"
+
+let () =
+    Printf.printf "Hey la zone %d" (plus 5 6)

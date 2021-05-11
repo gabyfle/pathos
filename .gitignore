@@ -1,2 +1,3 @@
 _build/*
 visualization/__pycache__/*
+*.osm

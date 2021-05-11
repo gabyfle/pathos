@@ -1,4 +1,6 @@
+
 (executable
- (public_name pathos)
- (name main)
- (libraries pathos xmlm))
+    (public_name pathos)
+    (name main)
+    (libraries pathos xmlm cosmium)
+)

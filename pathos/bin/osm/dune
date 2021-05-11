@@ -1,0 +1,16 @@
+(library
+    (name cosmium)
+    (c_library_flags :standard -lstdc++ -lpthread)
+    (foreign_archives binding)
+)
+
+(rule
+    (deps (source_tree osm))
+    (targets libbinding.a dllbinding.so)
+    (action
+        (no-infer
+            (progn
+                (chdir osm (run make))
+                (copy osm/libbindingsh.so dllbinding.so)
+                (copy osm/libbinding.a libbinding.a)
+))))
