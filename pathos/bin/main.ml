@@ -10,7 +10,5 @@
 (*                                                                            *)
 (*.-.. --- ...- . -..  /  .--. .- - .... --- ...  / .--. .-. --- .--- . -.-. -*)
 
-external plus : int -> int -> int = "display_numbers"
-
 let () =
-    Printf.printf "Hey la zone %d" (plus 5 6)
+    ignore (Map.create "map.osm")

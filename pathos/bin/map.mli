@@ -11,3 +11,5 @@
 (*                                                                            *)
 (*.-.. --- ...- . -..  /  .--. .- - .... --- ...  / .--. .-. --- .--- . -.-. -*)
 
+type osm
+external create : string -> osm = "osm_from_file"

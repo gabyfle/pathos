@@ -11,16 +11,9 @@
 #include "osm.hpp"
 
 #include <iostream>
+#include <string>
 
-
-Osm::Osm(int x, int y)
+Osm::Osm(std::string mapFile)
 {
-    this->one = x;
-    this->two = y;
-}
-
-void Osm::displayValues(void)
-{
-    std::cout << "one: " << this->one << std::endl;
-    std::cout << "two: " << this->two << std::endl;
+    this->mapFile = mapFile;
 }

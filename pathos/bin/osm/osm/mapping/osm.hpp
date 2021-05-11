@@ -8,12 +8,12 @@
  * File: osm.hpp
  */
 
+#include <string>
+
 class Osm
 {
     private:
-        int one, two;
+        std::string mapFile;
     public:
-        Osm(int x, int y);
-        void displayValues(void);
+        Osm(std::string mapFile);
 };
-

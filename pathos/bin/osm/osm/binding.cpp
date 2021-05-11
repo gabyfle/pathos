@@ -9,6 +9,8 @@
  */
 
 #include <iostream>
+#include <string>
+
 #include "mapping/osm.hpp"
 
 extern "C" {
@@ -16,17 +18,16 @@ extern "C" {
     #include <caml/memory.h>
 }
 
-void testing()
+/**
+ * osm_from_file
+ * Returns `osm` type from a given file path
+ */
+extern "C"
+CAMLprim value osm_from_file(value file)
 {
-    Osm map(1, 2);
-    map.displayValues();
-}
+    std::string fileName = String_val(file);
 
-extern "C" 
-value display_numbers(value one, value two)
-{
+    Osm osm(fileName);
 
-    std::cout << "Hello my friend" << std::endl;
-
-    return one;
+    return *reinterpret_cast<value*>(&osm);
 }
