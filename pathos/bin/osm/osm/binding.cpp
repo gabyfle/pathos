@@ -11,6 +11,8 @@
 #include <iostream>
 #include <string>
 
+#include <osmium/io/any_input.hpp>
+
 #include "mapping/osm.hpp"
 
 extern "C" {

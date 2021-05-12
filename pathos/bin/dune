@@ -2,5 +2,5 @@
 (executable
     (public_name pathos)
     (name main)
-    (libraries pathos xmlm cosmium)
+    (libraries pathos cosmium)
 )

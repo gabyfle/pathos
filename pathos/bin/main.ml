@@ -11,4 +11,4 @@
 (*.-.. --- ...- . -..  /  .--. .- - .... --- ...  / .--. .-. --- .--- . -.-. -*)
 
 let () =
-    ignore (Map.create "map.osm")
+    ignore (Map.read "map.osm")

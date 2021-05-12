@@ -12,4 +12,12 @@
 (*.-.. --- ...- . -..  /  .--. .- - .... --- ...  / .--. .-. --- .--- . -.-. -*)
 
 type osm
+
+(* 
+ * create
+ * Returns osm from a given file path
+ *)
 external create : string -> osm = "osm_from_file"
+
+let read fileMap =
+    create fileMap
