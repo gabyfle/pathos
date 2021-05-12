@@ -11,13 +11,14 @@
 #include <iostream>
 #include <string>
 
-#include <osmium/io/any_input.hpp>
-
 #include "mapping/osm.hpp"
 
 extern "C" {
+    #define CAML_NAME_SPACE
     #include <caml/mlvalues.h>
     #include <caml/memory.h>
+    #include <caml/alloc.h>
+    #include <caml/custom.h>
 }
 
 /**
@@ -27,9 +28,24 @@ extern "C" {
 extern "C"
 CAMLprim value osm_from_file(value file)
 {
+    CAMLparam1 (file);
     std::string fileName = String_val(file);
 
-    Osm osm(fileName);
+    std::cout << fileName << std::endl;
 
-    return *reinterpret_cast<value*>(&osm);
+    CAMLreturn (Val_unit);
+}
+
+/**
+ * osm_read_data
+ * Displays a progress bar
+ */
+extern "C"
+CAMLprim value osm_read_data(value osmObj)
+{
+    CAMLparam1 (osmObj);
+
+    std::cout << "Testing" << std::endl;
+
+    CAMLreturn (Val_unit);
 }

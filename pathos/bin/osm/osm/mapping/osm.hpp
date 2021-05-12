@@ -10,10 +10,13 @@
 
 #include <string>
 
+#include <osmium/io/any_input.hpp>
+
 class Osm
 {
     private:
-        std::string mapFile;
+        osmium::io::File file;
     public:
         Osm(std::string mapFile);
+        void read(void);
 };

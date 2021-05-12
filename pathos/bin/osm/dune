@@ -1,6 +1,6 @@
 (library
     (name cosmium)
-    (c_library_flags :standard -lstdc++ -lbz2 -lexpat -lz)
+    (c_library_flags :standard -lstdc++ -lbz2 -lexpat -lz -lpthread)
     (foreign_archives binding)
 )
 

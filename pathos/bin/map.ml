@@ -14,10 +14,16 @@
 type osm
 
 (* 
- * create
+ * c_create
  * Returns osm from a given file path
  *)
-external create : string -> osm = "osm_from_file"
+external c_create : string -> osm = "osm_from_file"
+(* 
+ * c_read
+ * Displays a progress bar
+ *)
+external c_read : osm -> unit = "osm_read_data"
 
 let read fileMap =
-    create fileMap
+    let map = c_create fileMap in
+    c_read map

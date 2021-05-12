@@ -13,4 +13,4 @@
 
 type osm
 
-val read : string -> osm
+val read : string -> unit
