@@ -24,7 +24,11 @@ extern "C" {
     static inline Osm * to_osm(value);
 
     CAMLprim value ocaml_osm_from_file(value);
-    CAMLprim value ocaml_osm_count_ways(value);
+
+    CAMLprim value ocaml_osm_count(value);
+        CAMLprim value ocaml_osm_count_ways(value);
+        CAMLprim value ocaml_osm_count_nodes(value);
+        CAMLprim value ocaml_osm_count_relations(value);
 }
 
 /**
@@ -79,4 +83,51 @@ CAMLprim value ocaml_osm_count_ways(value obj)
     Osm osm = *to_osm(obj);    
 
     CAMLreturn (Val_long(osm.count_ways()));
+}
+
+/**
+ * osm_count_nodes
+ * Returns the number of nodes in the OSM map file
+ */
+extern "C"
+CAMLprim value ocaml_osm_count_nodes(value obj)
+{
+    CAMLparam1 (obj);
+
+    Osm osm = *to_osm(obj);    
+
+    CAMLreturn (Val_long(osm.count_nodes()));
+}
+
+/**
+ * osm_count_relations
+ * Returns the number of relations in the OSM map file
+ */
+extern "C"
+CAMLprim value ocaml_osm_count_relations(value obj)
+{
+    CAMLparam1 (obj);
+
+    Osm osm = *to_osm(obj);
+
+    CAMLreturn (Val_long(osm.count_relations()));
+}
+
+/**
+ * osm_count
+ * Returns number ways, nodes and relations in the OSM map file
+ */
+extern "C"
+CAMLprim value ocaml_osm_count(value obj)
+{
+    CAMLparam1 (obj);
+
+    Osm osm = *to_osm(obj);
+
+    /* Tuple containing (ways * nodes * relations) */
+    auto t = osm.count();
+
+    // TODO
+
+    return 1;
 }
