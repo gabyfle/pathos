@@ -24,7 +24,7 @@ extern "C" {
     static inline Osm * to_osm(value);
 
     CAMLprim value ocaml_osm_from_file(value);
-    CAMLprim value ocaml_osm_read_data(value);
+    CAMLprim value ocaml_osm_count_ways(value);
 }
 
 /**

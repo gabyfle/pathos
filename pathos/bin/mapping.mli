@@ -13,5 +13,10 @@
 
 type osm
 
+(* Mapping.create str
+ * Create a OSM type object from a .OSM file *)
 val create : string -> osm
+
+(* Mapping.count_ways osm
+ * Counts the number of ways in the OSM file  *)
 val count_ways : osm -> int

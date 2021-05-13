@@ -24,25 +24,17 @@ type osm
 type highways = Freeway | Departmental | Street*)
 
 
-(* 
- * c_create
- * Returns osm from a given file path
- *)
+(* c_create
+ * Returns osm from a given file path *)
 external c_create : string -> osm = "ocaml_osm_from_file"
-(* 
- * c_count_ways
- * Count the number of ways of the current OSM file
- *)
+
+(* c_count_ways
+ * Count the number of ways of the current OSM file *)
 external c_count_ways : osm -> int = "ocaml_osm_count_ways"
 
-(*
- * Create a OSM type object from a .OSM file
- *)
+
 let create file =
     c_create file
 
-(*
- * Counts the number of ways in the OSM file
- *)
 let count_ways osm =
     c_count_ways osm
