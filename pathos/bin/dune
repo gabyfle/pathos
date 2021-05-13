@@ -1,6 +1,6 @@
 (executable
     (public_name pathos)
     (name main)
-    (link_flags -linkall -cclib -lstdc++)
+    (link_flags -cclib -lstdc++)
     (libraries pathos cosmium)
 )

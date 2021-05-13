@@ -18,7 +18,19 @@
 #include <osmium/util/progress_bar.hpp>
 
 /**
- * Osm constructor
+ * error
+ * Little snippet to handle error messages
+ * @param string func: Function where the error occured
+ * @param string e: the error
+ */
+inline void error(std::string func, std::string e)
+{
+    std::cerr << "An error occurred in function : " << func << ". Error: " << std::endl;
+    std::cerr << e << std::endl;
+}
+
+/**
+ * Osm::Osm
  * @param std::string mapFile: OSM map file to read data from
  */
 Osm::Osm(std::string mapFile)
@@ -26,14 +38,18 @@ Osm::Osm(std::string mapFile)
     try
     {
         this->file = osmium::io::File{mapFile};
+        std::cout << mapFile << std::endl;
     }
     catch(const std::exception& e)
     {
-        std::cerr << "An error occurred: " << std::endl;
-        std::cerr << e.what() << std::endl;
+        error("Osm::Osm", e.what());
     }
 }
 
+/**
+ * Osm::read
+ * Reads a file and displays a progress bar
+ */
 void Osm::read(void)
 {
     try
@@ -56,7 +72,7 @@ void Osm::read(void)
     }
     catch(const std::exception& e)
     {
-        std::cerr << e.what() << '\n';
+        error("Osm::read", e.what());
     }
     
 }

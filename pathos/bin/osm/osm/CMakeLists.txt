@@ -11,21 +11,21 @@
 
 cmake_minimum_required(VERSION 3.16.3)
 
-project(binding)
+project(osm)
 set(CMAKE_CXX_STANDARD 20)
 
 set(CMAKE_BUILD_SHARED ON)
 
-set(SOURCE_FILES binding.cpp mapping/osm.cpp)
+set(SOURCE_FILES mapping/osm.cpp)
 
 add_library(
-    binding
+    osm
     STATIC
     ${SOURCE_FILES}
 )
 
 add_library(
-    bindingsh
+    osmsh
     SHARED
     ${SOURCE_FILES}
 )
@@ -41,26 +41,27 @@ else()
 endif()
 
 find_package(BZip2 REQUIRED)
-target_link_libraries(binding PRIVATE BZip2::BZip2)
-target_link_libraries(bindingsh PRIVATE BZip2::BZip2)
+target_link_libraries(osm PRIVATE BZip2::BZip2)
+target_link_libraries(osmsh PRIVATE BZip2::BZip2)
 
 set(protobuf_DIR "/home/gabyfle/vcpkg/installed/x64-linux/share/protobuf")
 
 find_package(protobuf CONFIG REQUIRED)
-target_link_libraries(binding PRIVATE protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite)
+target_link_libraries(osm PRIVATE protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite)
+target_link_libraries(osmsh PRIVATE protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite)
 
 find_package(ZLIB REQUIRED)
-target_link_libraries(binding PRIVATE ZLIB::ZLIB)
-target_link_libraries(bindingsh PRIVATE ZLIB::ZLIB)
+target_link_libraries(osm PRIVATE ZLIB::ZLIB)
+target_link_libraries(osmsh PRIVATE ZLIB::ZLIB)
 
 set(expat_DIR "/home/gabyfle/vcpkg/installed/x64-linux/share/expat")
 
 find_package(expat CONFIG REQUIRED)
-target_link_libraries(binding PRIVATE expat::expat)
-target_link_libraries(bindingsh PRIVATE expat::expat)
+target_link_libraries(osm PRIVATE expat::expat)
+target_link_libraries(osmsh PRIVATE expat::expat)
 
 set(LIBOSMIUM_INCLUDE_DIRS "/home/gabyfle/vcpkg/installed/x64-linux/include")
 
 find_path(LIBOSMIUM_INCLUDE_DIRS "osmium/area/assembler.hpp")
-target_include_directories(binding PRIVATE ${LIBOSMIUM_INCLUDE_DIRS})
-target_include_directories(bindingsh PRIVATE ${LIBOSMIUM_INCLUDE_DIRS})
+target_include_directories(osm PRIVATE ${LIBOSMIUM_INCLUDE_DIRS})
+target_include_directories(osmsh PRIVATE ${LIBOSMIUM_INCLUDE_DIRS})

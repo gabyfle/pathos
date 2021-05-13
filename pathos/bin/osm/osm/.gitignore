@@ -3,3 +3,4 @@ CMakeCache.txt
 *.a
 *.so
 Makefile
+CMakeFiles/*
