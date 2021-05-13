@@ -11,4 +11,5 @@
 (*.-.. --- ...- . -..  /  .--. .- - .... --- ...  / .--. .-. --- .--- . -.-. -*)
 
 let () =
-    Map.read "map.osm"
+    let osm = Mapping.create "map.osm" in
+    Printf.printf "Ways: %d \n" (Mapping.count_ways osm)

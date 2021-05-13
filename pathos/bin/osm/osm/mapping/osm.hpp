@@ -17,6 +17,6 @@ class Osm
     private:
         osmium::io::File file;
     public:
-        Osm(std::string mapFile);
-        void read(void);
+        Osm(const std::string& mapFile);
+        unsigned int count_ways(void);
 };

@@ -6,7 +6,7 @@
 (* An attempt to generate evacuation plan in real time                        *)
 (* @author Gabriel Santamaria <gaby.santamaria@outlook.fr>                    *)
 (*                                                                            *)
-(* File: map.ml                                                               *)
+(* File: mapping.ml                                                           *)
 (* Description: Map data handling functions and algorithms                    *)
 (*                                                                            *)
 (*.-.. --- ...- . -..  /  .--. .- - .... --- ...  / .--. .-. --- .--- . -.-. -*)
@@ -30,11 +30,19 @@ type highways = Freeway | Departmental | Street*)
  *)
 external c_create : string -> osm = "ocaml_osm_from_file"
 (* 
- * c_read
- * Displays a progress bar
+ * c_count_ways
+ * Count the number of ways of the current OSM file
  *)
-external c_read : osm -> unit = "ocaml_osm_read_data"
+external c_count_ways : osm -> int = "ocaml_osm_count_ways"
 
-let read fileMap =
-    let map = c_create fileMap in
-    c_read map
+(*
+ * Create a OSM type object from a .OSM file
+ *)
+let create file =
+    c_create file
+
+(*
+ * Counts the number of ways in the OSM file
+ *)
+let count_ways osm =
+    c_count_ways osm

@@ -5,7 +5,7 @@
  * An attempt to generate evacuation plan in real time
  * @author Gabriel Santamaria <gaby.santamaria@outlook.fr>  
  *
- * File: binding.cpp
+ * File: binding.cc
  */
 
 #include <iostream>
@@ -34,7 +34,9 @@ extern "C" {
  */
 static inline value to_value(Osm * p)
 {
-    return caml_copy_nativeint((intnat) p);
+    value v = caml_alloc(sizeof(*p), Abstract_tag);
+    *((Osm **) Data_abstract_val(v)) = p;
+    return v;
 }
 
 /**
@@ -44,12 +46,12 @@ static inline value to_value(Osm * p)
  */
 static inline Osm * to_osm(value v)
 {
-    return (Osm *) Nativeint_val(v);
+    return *((Osm **) Data_abstract_val(v));
 }
 
 /**
  * osm_from_file
- * Returns `osm` type from a given file path
+ * Returns osm type from a given file path
  */
 extern "C"
 CAMLprim value ocaml_osm_from_file(value file)
@@ -59,28 +61,22 @@ CAMLprim value ocaml_osm_from_file(value file)
 
     std::cout << "Creating OSM object..." << std::endl;
 
-    Osm osm = Osm(fileName);
+    value v = caml_alloc(sizeof(Osm), Abstract_tag);
+    Osm* osm = new (Data_abstract_val(v)) Osm(fileName);
 
-    //if (sizeof(osm))
-    //    std::cout << "Done" << std::endl;
-
-    value v = to_value(&osm);
-
-    CAMLreturn (v);
+    CAMLreturn (to_value(osm));
 }
 
 /**
- * osm_read_data
- * Displays a progress bar
+ * osm_count_ways
+ * Returns the number of ways in the OSM map file
  */
 extern "C"
-CAMLprim value ocaml_osm_read_data(value obj)
+CAMLprim value ocaml_osm_count_ways(value obj)
 {
     CAMLparam1 (obj);
 
-    Osm osm = *to_osm(obj);
+    Osm osm = *to_osm(obj);    
 
-    osm.read();
-
-    CAMLreturn (Val_unit);
+    CAMLreturn (Val_long(osm.count_ways()));
 }

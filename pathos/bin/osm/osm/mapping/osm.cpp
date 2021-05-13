@@ -14,65 +14,35 @@
 #include <string>
 
 #include <osmium/io/any_input.hpp>
+#include <osmium/handler.hpp>
+#include <osmium/visitor.hpp>
 #include <osmium/util/file.hpp>
-#include <osmium/util/progress_bar.hpp>
-
-/**
- * error
- * Little snippet to handle error messages
- * @param string func: Function where the error occured
- * @param string e: the error
- */
-inline void error(std::string func, std::string e)
-{
-    std::cerr << "An error occurred in function : " << func << ". Error: " << std::endl;
-    std::cerr << e << std::endl;
-}
 
 /**
  * Osm::Osm
- * @param std::string mapFile: OSM map file to read data from
+ * @param mapFile <string>: OSM map file to read data from
  */
-Osm::Osm(std::string mapFile)
+Osm::Osm(const std::string& mapFile)
 {
-    try
-    {
-        this->file = osmium::io::File{mapFile};
-        std::cout << mapFile << std::endl;
-    }
-    catch(const std::exception& e)
-    {
-        error("Osm::Osm", e.what());
-    }
+    this->file = osmium::io::File{mapFile};
 }
 
 /**
- * Osm::read
- * Reads a file and displays a progress bar
+ * Osm::count_ways
+ * Counts the ways available in the current OSM file
+ * @return uint64_t
  */
-void Osm::read(void)
+unsigned int Osm::count_ways(void)
 {
-    try
-    {
-        osmium::io::Reader reader{this->file};
-        osmium::ProgressBar progress{reader.file_size(), osmium::isatty(2)};
+    struct CountHandler : public osmium::handler::Handler {
+        unsigned int ways = 0;
+        void way(const osmium::Way&) noexcept { ++ways; }
+    };
 
-        // OSM data comes in buffers, read until there are no more.
-        while (osmium::memory::Buffer buffer = reader.read()) {
-            // Update progress bar for each buffer.
-            progress.update(reader.offset());
-        }
-
-        // Progress bar is done.
-        progress.done();
-
-        // You do not have to close the Reader explicitly, but because the
-        // destructor can't throw, you will not see any errors otherwise.
-        reader.close();
-    }
-    catch(const std::exception& e)
-    {
-        error("Osm::read", e.what());
-    }
+    osmium::io::Reader reader{this->file};
     
+    CountHandler handler;
+    osmium::apply(reader, handler);
+
+    return handler.ways;
 }
