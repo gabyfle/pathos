@@ -115,19 +115,24 @@ CAMLprim value ocaml_osm_count_relations(value obj)
 
 /**
  * osm_count
- * Returns number ways, nodes and relations in the OSM map file
+ * Returns a TUPLE containing the number of ways, nodes and relations in the OSM map file
  */
 extern "C"
 CAMLprim value ocaml_osm_count(value obj)
 {
     CAMLparam1 (obj);
+    CAMLlocal1(tuple);
 
     Osm osm = *to_osm(obj);
 
     /* Tuple containing (ways * nodes * relations) */
     auto t = osm.count();
 
-    // TODO
+    tuple = caml_alloc_tuple(3);
 
-    return 1;
+    Store_field(tuple, 0, std::get<0>(t));
+    Store_field(tuple, 1, std::get<1>(t));
+    Store_field(tuple, 2, std::get<2>(t));
+
+    CAMLreturn (tuple);
 }

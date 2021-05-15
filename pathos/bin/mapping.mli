@@ -18,5 +18,17 @@ type osm
 val create : string -> osm
 
 (* Mapping.count_ways osm
- * Counts the number of ways in the OSM file  *)
+ * Counts the number of ways in the OSM file *)
 val count_ways : osm -> int
+
+(* Mapping.count_nodes osm
+ * Counts the number of nodes in the OSM file *)
+val count_nodes : osm -> int
+
+(* Mapping.count_relations osm
+ * Counts the number of relations in the OSM file *)
+val count_relations : osm -> int
+
+(* Mapping.count osm
+ * Counts the number of ways, nodes and relations in the OSM file *)
+val count : osm -> (int * int * int)

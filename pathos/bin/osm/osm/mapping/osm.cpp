@@ -15,9 +15,9 @@
 #include <tuple>
 
 #include <osmium/io/any_input.hpp>
-#include <osmium/handler.hpp>
 #include <osmium/visitor.hpp>
 #include <osmium/util/file.hpp>
+
 
 /**
  * Osm::Osm
@@ -26,6 +26,8 @@
 Osm::Osm(const std::string& mapFile)
 {
     this->file = osmium::io::File{mapFile};
+
+    this->countHandler = new CountHandler;
 }
 
 /**
@@ -35,17 +37,13 @@ Osm::Osm(const std::string& mapFile)
  */
 unsigned int Osm::count_ways(void)
 {
-    struct CountHandler : public osmium::handler::Handler {
-        unsigned int ways = 0;
-        void way(const osmium::Way&) noexcept { ++ways; }
-    };
-
     osmium::io::Reader reader{this->file};
     
-    CountHandler handler;
-    osmium::apply(reader, handler);
+    if (!counted)
+        osmium::apply(reader, *this->countHandler);
+    this->counted = true;
 
-    return handler.ways;
+    return (*this->countHandler).ways;
 }
 
 /**
@@ -55,17 +53,13 @@ unsigned int Osm::count_ways(void)
  */
 unsigned int Osm::count_nodes(void)
 {
-    struct CountHandler : public osmium::handler::Handler {
-        unsigned int nodes = 0;
-        void nodes(const osmium::Node&) noexcept { ++nodes; }
-    };
-
     osmium::io::Reader reader{this->file};
     
-    CountHandler handler;
-    osmium::apply(reader, handler);
+    if (!counted)
+        osmium::apply(reader, (*this->countHandler));
+    this->counted = true;
 
-    return handler.nodes;
+    return (*this->countHandler).nodes;
 }
 
 /**
@@ -75,17 +69,13 @@ unsigned int Osm::count_nodes(void)
  */
 unsigned int Osm::count_relations(void)
 {
-    struct CountHandler : public osmium::handler::Handler {
-        unsigned int relations = 0;
-        void relations(const osmium::Relation&) noexcept { ++relations; }
-    };
-
     osmium::io::Reader reader{this->file};
-    
-    CountHandler handler;
-    osmium::apply(reader, handler);
 
-    return handler.relations;
+    if (!counted)
+        osmium::apply(reader, (*this->countHandler));
+    this->counted = true;
+
+    return (*this->countHandler).relations;
 }
 
 /**

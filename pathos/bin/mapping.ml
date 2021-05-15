@@ -32,9 +32,25 @@ external c_create : string -> osm = "ocaml_osm_from_file"
  * Count the number of ways of the current OSM file *)
 external c_count_ways : osm -> int = "ocaml_osm_count_ways"
 
+(* c_count_nodes
+ * Count the number of nodes of the current OSM file *)
+external c_count_nodes : osm -> int = "ocaml_osm_count_nodes"
 
-let create file =
-    c_create file
+(* c_count_relations
+ * Count the number of relations of the current OSM file *)
+external c_count_relations : osm -> int = "ocaml_osm_count_relations"
 
-let count_ways osm =
-    c_count_ways osm
+(* c_count
+ * Count the number of ways, nodes and relations of the current OSM file 
+ * Returns a TUPLE (ways * nodes * relations) *)
+external c_count : osm -> (int * int * int) = "ocaml_osm_count"
+
+let create = c_create
+
+let count_ways = c_count_ways
+
+let count_nodes = c_count_nodes
+
+let count_relations = c_count_relations
+
+let count = c_count

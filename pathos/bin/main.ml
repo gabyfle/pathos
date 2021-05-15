@@ -12,4 +12,5 @@
 
 let () =
     let osm = Mapping.create "map.osm" in
-    Printf.printf "Ways: %d \n" (Mapping.count_ways osm)
+    match (Mapping.count osm) with
+        | (a, b, c) -> Printf.printf "Ways: %d \nNodes: %d \nRelations: %d \n" a b c
