@@ -13,6 +13,8 @@
 
 #include "mapping/osm.hpp"
 
+using namespace Mapping;
+
 extern "C" {
     #define CAML_NAME_SPACE
     #include <caml/mlvalues.h>
@@ -20,15 +22,17 @@ extern "C" {
     #include <caml/alloc.h>
     #include <caml/custom.h>
 
-    static inline value to_value(Osm*);
-    static inline Osm * to_osm(value);
+    static value to_value(Osm*);
+    static Osm * to_osm(value);
 
     CAMLprim value ocaml_osm_from_file(value);
 
+    #pragma region Counting
     CAMLprim value ocaml_osm_count(value);
-        CAMLprim value ocaml_osm_count_ways(value);
-        CAMLprim value ocaml_osm_count_nodes(value);
-        CAMLprim value ocaml_osm_count_relations(value);
+    CAMLprim value ocaml_osm_count_ways(value);
+    CAMLprim value ocaml_osm_count_nodes(value);
+    CAMLprim value ocaml_osm_count_relations(value);
+    #pragma endregion Counting
 }
 
 /**
@@ -36,7 +40,7 @@ extern "C" {
  * @param Osm* p
  * @return value
  */
-static inline value to_value(Osm * p)
+static value to_value(Osm * p)
 {
     value v = caml_alloc(sizeof(*p), Abstract_tag);
     *((Osm **) Data_abstract_val(v)) = p;
@@ -48,7 +52,7 @@ static inline value to_value(Osm * p)
  * @param value
  * @return Osm*
  */
-static inline Osm * to_osm(value v)
+static Osm * to_osm(value v)
 {
     return *((Osm **) Data_abstract_val(v));
 }
@@ -62,8 +66,6 @@ CAMLprim value ocaml_osm_from_file(value file)
 {
     CAMLparam1 (file);
     std::string fileName = String_val(file);
-
-    std::cout << "Creating OSM object..." << std::endl;
 
     value v = caml_alloc(sizeof(Osm), Abstract_tag);
     Osm* osm = new (Data_abstract_val(v)) Osm(fileName);

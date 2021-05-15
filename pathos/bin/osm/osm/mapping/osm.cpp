@@ -18,72 +18,74 @@
 #include <osmium/visitor.hpp>
 #include <osmium/util/file.hpp>
 
-
-/**
- * Osm::Osm
- * @param mapFile <string>: OSM map file to read data from
- */
-Osm::Osm(const std::string& mapFile)
+namespace Mapping
 {
-    this->file = osmium::io::File{mapFile};
+    /**
+     * Osm::Osm
+     * @param mapFile <string>: OSM map file to read data from
+     */
+    Osm::Osm(const std::string& mapFile)
+    {
+        this->file = osmium::io::File{mapFile};
 
-    this->countHandler = new CountHandler;
-}
+        this->countHandler = new CountHandler;
+    }
 
-/**
- * Osm::count_ways
- * Counts the ways available in the current OSM file
- * @return uint
- */
-unsigned int Osm::count_ways(void)
-{
-    osmium::io::Reader reader{this->file};
-    
-    if (!counted)
-        osmium::apply(reader, *this->countHandler);
-    this->counted = true;
+    /**
+     * Osm::count_ways
+     * Counts the ways available in the current OSM file
+     * @return uint
+     */
+    unsigned int Osm::count_ways(void)
+    {
+        osmium::io::Reader reader{this->file};
+        
+        if (!counted)
+            osmium::apply(reader, *this->countHandler);
+        this->counted = true;
 
-    return (*this->countHandler).ways;
-}
+        return (*this->countHandler).ways;
+    }
 
-/**
- * Osm::count_nodes
- * Counts the nodes available in the current OSM file
- * @return uint
- */
-unsigned int Osm::count_nodes(void)
-{
-    osmium::io::Reader reader{this->file};
-    
-    if (!counted)
-        osmium::apply(reader, (*this->countHandler));
-    this->counted = true;
+    /**
+     * Osm::count_nodes
+     * Counts the nodes available in the current OSM file
+     * @return uint
+     */
+    unsigned int Osm::count_nodes(void)
+    {
+        osmium::io::Reader reader{this->file};
+        
+        if (!counted)
+            osmium::apply(reader, (*this->countHandler));
+        this->counted = true;
 
-    return (*this->countHandler).nodes;
-}
+        return (*this->countHandler).nodes;
+    }
 
-/**
- * Osm::count_relations
- * Counts the relations available in the current OSM file
- * @return uint
- */
-unsigned int Osm::count_relations(void)
-{
-    osmium::io::Reader reader{this->file};
+    /**
+     * Osm::count_relations
+     * Counts the relations available in the current OSM file
+     * @return uint
+     */
+    unsigned int Osm::count_relations(void)
+    {
+        osmium::io::Reader reader{this->file};
 
-    if (!counted)
-        osmium::apply(reader, (*this->countHandler));
-    this->counted = true;
+        if (!counted)
+            osmium::apply(reader, (*this->countHandler));
+        this->counted = true;
 
-    return (*this->countHandler).relations;
-}
+        return (*this->countHandler).relations;
+    }
 
-/**
- * Osm::count
- * Counts ways, nodes and relations of the OSM file
- * @return std::tuple<uint, uint, uint>
- */
-std::tuple<unsigned int, unsigned int, unsigned int> Osm::count(void)
-{
-    return std::tuple<unsigned int, unsigned int, unsigned int>{this->count_ways(), this->count_nodes(), this->count_relations()};
+    /**
+     * Osm::count
+     * Counts ways, nodes and relations of the OSM file
+     * @return std::tuple<uint, uint, uint>
+     */
+    std::tuple<unsigned int, unsigned int, unsigned int> Osm::count(void)
+    {
+        return std::tuple<unsigned int, unsigned int, unsigned int>{this->count_ways(), this->count_nodes(), this->count_relations()};
+    }
 }
