@@ -8,11 +8,15 @@
 #--
 
 import sys
+from pathlib import Path
 
 import pygame
 from pygame.locals import *
+
+import osmium
+import ways
+
 import numpy as np
-import xml.etree.ElementTree as xmlp
 
 config = {
     'fps': 60,
@@ -21,7 +25,7 @@ config = {
 }
 
 # Using Mercator projection formula
-def mercator(lon, lat, width = 14, height = 8):
+def mercator(lon, lat, width = config['width'], height = config['height']):
     lon, lat, width, height = float(lon), float(lat), float(width), float(height)
     s = 40075016 * np.cos(np.radians(lat)) / 2 ** 23 
     r = width / (2 * np.pi)
@@ -29,38 +33,22 @@ def mercator(lon, lat, width = 14, height = 8):
     y = (height / 2) - r * np.log(np.tan(np.pi / 4 + np.radians(lat) / 2))
     return np.array([x * s, y * s, 0])
 
-def mapping(data):
+def mapping(file: str) -> list:
     """
-    Gets every nodes from an entry XML file and calculates every coordinates
-    with the Mercator projection
+    Reads an OSM file using Osmium and return a list of coordinates
     """
-    tree = xmlp.parse(data)
-    root = tree.getroot()
 
-    bounds = {}
-    nodes = {}
-    ways = {}
+    f = Path(file)
+    if not f.is_file():
+        raise Exception("OSM file not found.")
 
-    for child in root:
-        t = child.tag
-        att = child.attrib
-        if t == 'bounds': bounds = att
-        if t == 'node':
-            bds = [mercator(bounds['minlon'], bounds['minlat']), mercator(bounds['maxlon'], bounds['maxlat'])]
-            s = (bds[1][0] - bds[0][0], bds[1][1] - bds[0][1])
-            xy = mercator(att['lon'], att['lat'])
-            nodes[att['id']] = np.array([xy[0], xy[1], 0])
-        if t == 'way': ways[att['id']] = [nd.attrib['ref'] for nd in child if nd.tag == 'nd']
+    w = ways.WaysHandler()
+    w.apply_file(str(f), locations=True)
 
-    lines = []
-    for way, nds in ways.items():
-        lines.append([nodes[node] for node in nds])
-
-    return lines
-
+    for way in w.ways:
+        print(len(way))
 
 class Game:
-
     drawTick = False
 
     def draw(self, screen):
@@ -96,6 +84,7 @@ class Game:
             dt = clock.tick(config['fps'])
 
 def main():
+    result = mapping('map.osm')
     game = Game(False)
 
 main()
