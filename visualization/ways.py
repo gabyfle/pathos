@@ -10,22 +10,32 @@
 
 from osmium import *
 
+def getLocation(node):
+    return (node.location.lat, node.location.lon)
+
 class Part():
     """
     A little portion of a way
     """
-    start: osm.Node
-    end:   osm.Node
+    start: float
+    end:   float
 
     def __init__(self, start, end):
         self.start = start
         self.end = end
 
-    def startPos(self) -> osm.Location:
+    def startPos(self) -> float:
         return self.start
     
-    def endPos(self) -> osm.Location:
+    def endPos(self) -> float:
         return self.end
+    
+    def applyCoords(self, x, y) -> None:
+        self.x = x
+        self.y = y
+
+    def coords():
+        return (x, y)
 
 class Way():
     """
@@ -35,17 +45,21 @@ class Way():
     parts: list
     nodes: list
 
+    length: float # way length
+
     def __init__(self, nodes):
         self.parts = []
-        self.nodes = nodes
+        self.nodes = [getLocation(node) for node in nodes]
+
+        self.length = geom.haversine_distance(nodes)
 
         n = len(nodes) - 1    
         for k in range(n):
             if k == n: break
-            self.parts += [Part(nodes[k], nodes[k + 1])]
+            self.parts += [Part(getLocation(nodes[k]), getLocation(nodes[k +1]))]
         
-    def __len__(self):
-        return geom.haversine_distance(self.nodes)
+    def distance(self):
+        return self.length
 
 class WaysHandler(SimpleHandler):
     ways: list
@@ -55,5 +69,4 @@ class WaysHandler(SimpleHandler):
         self.ways = []
     
     def way(self, w): # this is heavy
-        print(type(w.nodes))
         self.ways += [Way(w.nodes)]
