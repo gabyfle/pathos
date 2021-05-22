@@ -34,8 +34,8 @@ class Part():
         self.x = x
         self.y = y
 
-    def coords():
-        return (x, y)
+    def coords(self):
+        return (self.x, self.y)
 
 class Way():
     """

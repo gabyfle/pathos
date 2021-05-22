@@ -19,23 +19,31 @@ import osmium
 import ways
 
 import numpy as np
+import math
 
 config = {
     'fps': 60,
-    'width': 1280,
-    'height': 720
+    'width': 640,
+    'height': 360
 }
 
 # Using Mercator projection formula
-def mercator(lon, lat, width = config['width'], height = config['height']):
+def yolo(lon, lat, width = config['width'], height = config['height']):
     lon, lat, width, height = float(lon), float(lat), float(width), float(height)
     r = width / (2 * np.pi)
     x = r * np.radians(lon)
     y = (height / 2) - r * np.log(np.tan(np.pi / 4 + np.radians(lat) / 2))
     return np.array([x, y, 0])
 
-def to_screen(rTop, rBottom, lon, lat):
-    coord = mercator(lon, lat)
+def mercator(lon, lat, minlat, maxlat):
+    r = 6371
+    x = r * lon * np.cos(np.radians((minlat + maxlat) / 2))
+    y = r * lat
+
+    return np.array([x, y, 0])
+
+def to_screen(rTop, rBottom, lat, lon):
+    coord = mercator(lat, lon, rBottom.lat, rTop.lat)
 
     perX = ((coord[0] - rTop.pos[0]) / (rBottom.pos[0] - rTop.pos[0]))
     perY = ((coord[1] - rTop.pos[1]) / (rBottom.pos[1] - rTop.pos[1]))
@@ -54,17 +62,20 @@ def mapping(file: str) -> list:
         """
         A reference coordinate
         """
-        def __init__(self, lon, lat, x, y):
+        def __init__(self, lat, lon, x, y, minlat, maxlat):
             self.lon = lon
             self.lat = lat
             self.x = x
             self.y = y
 
-            self.pos = mercator(lon, lat)
+            self.pos = mercator(lat, lon, minlat, maxlat)
+
+        def getCoords(self):
+            return (self.lat, self.lon)
 
 
     def getCoordinates(attributes): # that's not very clean but you know what
-        return ((float(attributes["minlat"]), float(attributes["minlon"])), (float(attributes['maxlat']), float(attributes['maxlon'])))
+        return ((float(attributes["maxlat"]), float(attributes["minlon"])), (float(attributes['minlat']), float(attributes['maxlon'])))
 
     f = Path(file)
     if not f.is_file():
@@ -81,8 +92,8 @@ def mapping(file: str) -> list:
 
     bounds = getCoordinates(bounds.attrib)
 
-    bottom = Reference(bounds[0][0], bounds[0][1], config["width"], config["height"])
-    top = Reference(bounds[1][0], bounds[1][1], 0, 0)
+    bottom = Reference(bounds[1][0], bounds[1][1], config["width"], config["height"], bounds[1][0], bounds[0][0])
+    top = Reference(bounds[0][0], bounds[0][1], 0, 0, bounds[1][0], bounds[0][0])
 
     w = ways.WaysHandler()
     w.apply_file(str(f), locations=True)
@@ -93,13 +104,19 @@ def mapping(file: str) -> list:
             b = to_screen(top, bottom, part.endPos()[0], part.endPos()[1])
             part.applyCoords(a, b)
 
-    return w
+    return w.ways
 
 class Game:
     drawTick = False
 
     def draw(self, screen):
         screen.fill((0, 0, 0))
+
+        for way in self.data:
+            for part in way.parts:
+                c = part.coords()
+                print(c)
+                pygame.draw.line(screen, (255, 255, 255), c[0], c[1], 2)
 
         pygame.display.flip()
 
@@ -109,10 +126,11 @@ class Game:
                 pygame.quit()
                 sys.exit()
 
-    def __init__(self, drwTck = False):
+    def __init__(self, mapData, drwTck = False):
         pygame.init()
 
         self.drawTick = drwTck
+        self.data = mapData
     
         clock = pygame.time.Clock()
         screen = pygame.display.set_mode((config['width'], config['height']))
@@ -132,7 +150,6 @@ class Game:
 
 def main():
     result = mapping('map.osm')
-    #game = Game(False)
-    print('Done.')
+    game = Game(result)
 
 main()
