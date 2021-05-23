@@ -20,6 +20,8 @@ class Part():
     start: float
     end:   float
 
+    disabled = False
+
     def __init__(self, start, end):
         self.start = start
         self.end = end
@@ -31,11 +33,16 @@ class Part():
         return self.end
     
     def applyCoords(self, x, y) -> None:
-        self.x = x
-        self.y = y
+        self.startCoords = x
+        self.endCoords = y
 
     def coords(self):
-        return (self.x, self.y)
+        if self.disabled:
+            raise Exception("This part has been disabled")
+        return (self.startCoords, self.endCoords)
+
+    def disable(self):
+        self.disabled = True
 
 class Way():
     """
@@ -56,7 +63,7 @@ class Way():
         n = len(nodes) - 1    
         for k in range(n):
             if k == n: break
-            self.parts += [Part(getLocation(nodes[k]), getLocation(nodes[k +1]))]
+            self.parts += [Part(getLocation(nodes[k]), getLocation(nodes[k + 1]))]
         
     def distance(self):
         return self.length
@@ -70,3 +77,4 @@ class WaysHandler(SimpleHandler):
     
     def way(self, w): # this is heavy
         self.ways += [Way(w.nodes)]
+
