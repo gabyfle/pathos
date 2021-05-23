@@ -23,8 +23,8 @@ import math
 
 config = {
     'fps': 60,
-    'width': 1920,
-    'height': 1080
+    'width': 640,
+    'height': 360
 }
 
 # Using Mercator projection formula
@@ -33,9 +33,9 @@ def mercator(lat, lon, width = config["width"], height = config["height"]):
 
     lRad = (lat * np.pi) / 180
 
-    N = np.log(np.tan((np.pi / 4) + (lRad / 2)))
+    N = np.log(math.tan((np.pi / 4) + (lRad / 2)))
 
-    y = (height / 2) - (width * N / (2 * np.pi))
+    y = (height / 20) - (width * N / (2 * np.pi))
 
     return (x, y)
 
@@ -47,7 +47,7 @@ def to_screen(rTop, rBottom, lat, lon):
 
     return (
         rTop.x + (rBottom.x - rTop.x) * perX,
-        rBottom.y + (rBottom.y - rTop.y) * perY
+        rBottom.y + (rBottom.y - rTop.y) * perY - config["height"]
     )
 
 def mapping(file: str) -> list:
@@ -120,9 +120,10 @@ class Game:
             for part in way.parts:
                 try:
                     c = part.coords()
+                    #print(c)
                 except Exception as e:
                     continue
-                pygame.draw.line(screen, (255, 255, 255), (c[0][1], c[0][0]), (c[1][1], c[1][0]), 2)
+                pygame.draw.line(screen, (255, 255, 255), c[0], c[1], 1)
 
         pygame.display.flip()
         pygame.display.update()
