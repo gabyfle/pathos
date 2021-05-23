@@ -2,7 +2,7 @@
 Pathfinding experimentations to improve escape from dangerous areas
 
 <div align = "center">
-    <img src = "Bordeaux.png" width="360"/> 
+    <img src = "Bordeaux.png" width="720"/> 
 </div>
 
 ## Escape visualization
