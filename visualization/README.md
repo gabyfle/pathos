@@ -1,6 +1,10 @@
 # pathos
 Pathfinding experimentations to improve escape from dangerous areas
 
+<div align = "center">
+    <img src = "Bordeaux.png" width="360"/> 
+</div>
+
 ## Escape visualization
 Helps visualize evacuation plans and their behavior on a population of points. This should not be taken a measure of the efficiency of the algorithms, it is used to get an idea of their behavior.
 
