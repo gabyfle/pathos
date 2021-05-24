@@ -71,13 +71,13 @@ class Way():
 class WaysHandler(SimpleHandler):
     ways: list
 
-    def __init__(self, idx):
+    def __init__(self, idx, ultra):
         super(WaysHandler, self).__init__()
         self.ways = []
         self.idx = idx
+        self.ultra = ultra
     
     def way(self, w): # this is heavy
-        if w.ends_have_same_id():
+        if not self.ultra and w.ends_have_same_id():
             return
         self.ways += [Way(w.nodes)]
-

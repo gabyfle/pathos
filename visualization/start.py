@@ -7,11 +7,10 @@
 # visualization - visualize algorithms throught animations
 #--
 
-import sys, getopt
+import sys, argparse
 import time
 from pathlib import Path
 
-import xml.etree.ElementTree as xmlp
 import progressbar
 
 import pygame
@@ -52,7 +51,7 @@ def to_screen(rTop, rBottom, lat, lon):
         rBottom.y + (rBottom.y - rTop.y) * perY - config["height"]
     )
 
-def mapping(file: str) -> list:
+def mapping(file: str, ultra: bool) -> list:
     """
     Reads an OSM file using Osmium and return a list of coordinates
     """
@@ -85,8 +84,8 @@ def mapping(file: str) -> list:
 
         bar.update(1)
 
-        bottom = Reference(bounds[1][0], bounds[1][1], config["width"], config["height"])
-        top = Reference(bounds[0][0], bounds[0][1], 0, 0)
+        bottom = Reference(bounds[1][0], bounds[0][1], config["width"], config["height"])
+        top = Reference(bounds[0][0], bounds[1][1], 0, 0)
 
         bar.update(1)
 
@@ -96,7 +95,7 @@ def mapping(file: str) -> list:
 
         bar.update(1)
 
-        w = ways.WaysHandler(idx)
+        w = ways.WaysHandler(idx, ultra)
         osmium.apply(rd, lh, w)
 
         bar.update(1)
@@ -131,7 +130,7 @@ class Game:
         pygame.display.flip()
         pygame.display.update()
 
-        pygame.image.save(screen, "pathos_rendering_" + str(math.floor(time.time() / 10)) + ".png")
+        pygame.image.save(screen, self.output)
 
     def update(self, dt):
         for event in pygame.event.get():
@@ -139,8 +138,10 @@ class Game:
                 pygame.quit()
                 sys.exit()
 
-    def __init__(self, mapData, drwTck = False):
+    def __init__(self, mapData, output, drwTck = False):
         pygame.init()
+
+        self.output = output
 
         pygame.display.set_mode(flags=pygame.HIDDEN)
         pygame.display.set_caption("Pathos visualization")
@@ -151,7 +152,7 @@ class Game:
         clock = pygame.time.Clock()
         screen = pygame.display.set_mode((config["width"], config["height"]))
         
-        dt = 1 / config['fps']
+        dt = 1 / config["fps"]
 
         drawed = False
 
@@ -165,32 +166,32 @@ class Game:
                 pygame.quit()
                 return
         
-            dt = clock.tick(config['fps'])
+            dt = clock.tick(config["fps"])
 
-def main(argv):
-    osm = ""
+def get_args():
+    parser = argparse.ArgumentParser(prog="pathos visualization", description="Visualization of Pathos algorithms")
 
-    try:
-        opts, args = getopt.getopt(argv, "hi:")
-    except getopt.GetoptError:
-        print("Usage: pathos.py -i <.osm data file>")
-        sys.exit(1)
+    files = parser.add_argument_group(title="File input and output")
+    files.add_argument("-i", action="store", nargs=1, metavar=("<input>"), help="OpenStreetMap input file", type=str, required=True)
+    files.add_argument('-o', action="store", nargs=1, metavar="<output>", help="Image generation output file", type=str, default = "pathos_rendering_" + str(math.floor(time.time() / 10)) + ".png", required=False)
 
-    for opt, arg in opts:
-        if opt == "-h":
-            print("Usage: pathos.py -i <.osm data file>")
-            sys.exit(0)
-        elif opt == "-i":
-            osm = arg
+    # Configuration
+    config = parser.add_argument_group(title="Configuration of the rendering")
+    config.add_argument('--ultra', help="Applies the ULTRA mode. Warning, launch it only on a tiny area if you don't want your PC to caught fire.", nargs="?", const=True, default=False, type=bool)
+
+    return parser.parse_args()
+
+def main():
+    args = get_args()
 
     sTime = time.time()
     print("Generating map from file...")
-    result = mapping(osm)
+    result = mapping(args.i[0], args.ultra)
     print("Executed `mapping` in: " + str(time.time() - sTime))
 
     print("Generating image...")
     sTime = time.time()
-    game = Game(result)
+    game = Game(result, args.o)
     print("Executed `Game` in: " + str(time.time() - sTime))
 
-main(sys.argv[1:])
+main()
