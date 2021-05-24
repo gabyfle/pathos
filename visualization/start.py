@@ -173,7 +173,7 @@ def get_args():
 
     files = parser.add_argument_group(title="File input and output")
     files.add_argument("-i", action="store", nargs=1, metavar=("<input>"), help="OpenStreetMap input file", type=str, required=True)
-    files.add_argument('-o', action="store", nargs=1, metavar="<output>", help="Image generation output file", type=str, default = "pathos_rendering_" + str(math.floor(time.time() / 10)) + ".png", required=False)
+    files.add_argument('-o', action="store", nargs=1, metavar="<output>", help="Image generation output file", type=str, default = ["pathos_rendering_" + str(math.floor(time.time() / 10)) + ".png"], required=False)
 
     # Configuration
     config = parser.add_argument_group(title="Configuration of the rendering")
@@ -191,7 +191,7 @@ def main():
 
     print("Generating image...")
     sTime = time.time()
-    game = Game(result, args.o)
+    game = Game(result, args.o[0])
     print("Executed `Game` in: " + str(time.time() - sTime))
 
 main()
