@@ -1,3 +1,6 @@
 *.yml
 *.osm
+*.pbf
+*.png
+*.nodecache
 __pycache__/*

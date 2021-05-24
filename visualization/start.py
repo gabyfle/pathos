@@ -7,10 +7,12 @@
 # visualization - visualize algorithms throught animations
 #--
 
-import sys
+import sys, getopt
+import time
 from pathlib import Path
 
 import xml.etree.ElementTree as xmlp
+import progressbar
 
 import pygame
 from pygame.locals import *
@@ -22,9 +24,9 @@ import numpy as np
 import math
 
 config = {
-    'fps': 60,
-    'width': 640,
-    'height': 360
+    "fps": 60,
+    "width": 7680,
+    "height": 4320
 }
 
 # Using Mercator projection formula
@@ -70,43 +72,45 @@ def mapping(file: str) -> list:
         def getCoords(self):
             return (self.lat, self.lon)
 
-
-    def getCoordinates(attributes): # that's not very clean but you know what
-        return ((float(attributes["maxlat"]), float(attributes["minlon"])), (float(attributes['minlat']), float(attributes['maxlon'])))
-
     f = Path(file)
     if not f.is_file():
         raise Exception("OSM file not found.")
 
-    tree = xmlp.parse(str(f))
-    root = tree.getroot()
+    with progressbar.ProgressBar(max_value=progressbar.UnknownLength) as bar:
+        bar.update(1)
 
-    bounds = {}
-    for t in root:
-        if t.tag == "bounds":
-            bounds = t
-            break
+        rd = osmium.io.Reader(str(f))
+        bx = rd.header().box()
+        bounds = ((bx.top_right.lat, bx.top_right.lon), (bx.bottom_left.lat, bx.bottom_left.lon))
 
-    bounds = getCoordinates(bounds.attrib)
+        bar.update(1)
 
-    bottom = Reference(bounds[1][0], bounds[1][1], config["width"], config["height"])
-    top = Reference(bounds[0][0], bounds[0][1], 0, 0)
+        bottom = Reference(bounds[1][0], bounds[1][1], config["width"], config["height"])
+        top = Reference(bounds[0][0], bounds[0][1], 0, 0)
 
-    w = ways.WaysHandler()
-    w.apply_file(str(f), locations=True)
+        bar.update(1)
 
-    def is_in_area(p):
-        return top.lat < p[0] or p[1] < top.lon or bottom.lon < p[1] or p[0] < bottom.lat
+        idx = osmium.index.create_map("sparse_file_array," + str(f) + ".nodecache")
+        lh = osmium.NodeLocationsForWays(idx)
+        lh.ignore_errors()
 
-    for way in w.ways:
-        for part in way.parts:
-            sPos = part.startPos()
-            ePos = part.endPos()
+        bar.update(1)
 
-            a = to_screen(top, bottom, sPos[0], sPos[1])
-            b = to_screen(top, bottom, ePos[0], ePos[1])
+        w = ways.WaysHandler(idx)
+        osmium.apply(rd, lh, w)
 
-            part.applyCoords(a, b)
+        bar.update(1)
+
+        for way in w.ways:
+            for part in way.parts:
+                sPos = part.startPos()
+                ePos = part.endPos()
+
+                a = to_screen(top, bottom, sPos[0], sPos[1])
+                b = to_screen(top, bottom, ePos[0], ePos[1])
+
+                part.applyCoords(a, b)
+            bar.update(1)
 
     return w.ways
 
@@ -120,13 +124,14 @@ class Game:
             for part in way.parts:
                 try:
                     c = part.coords()
-                    #print(c)
                 except Exception as e:
                     continue
                 pygame.draw.line(screen, (255, 255, 255), c[0], c[1], 1)
 
         pygame.display.flip()
         pygame.display.update()
+
+        pygame.image.save(screen, "pathos_rendering_" + str(math.floor(time.time() / 10)) + ".png")
 
     def update(self, dt):
         for event in pygame.event.get():
@@ -137,6 +142,7 @@ class Game:
     def __init__(self, mapData, drwTck = False):
         pygame.init()
 
+        pygame.display.set_mode(flags=pygame.HIDDEN)
         pygame.display.set_caption("Pathos visualization")
 
         self.drawTick = drwTck
@@ -155,11 +161,36 @@ class Game:
             if self.drawTick or not drawed:
                 self.draw(screen)
                 drawed = True
+            elif drawed:
+                pygame.quit()
+                return
         
             dt = clock.tick(config['fps'])
 
-def main():
-    result = mapping('map.osm')
-    game = Game(result)
+def main(argv):
+    osm = ""
 
-main()
+    try:
+        opts, args = getopt.getopt(argv, "hi:")
+    except getopt.GetoptError:
+        print("Usage: pathos.py -i <.osm data file>")
+        sys.exit(1)
+
+    for opt, arg in opts:
+        if opt == "-h":
+            print("Usage: pathos.py -i <.osm data file>")
+            sys.exit(0)
+        elif opt == "-i":
+            osm = arg
+
+    sTime = time.time()
+    print("Generating map from file...")
+    result = mapping(osm)
+    print("Executed `mapping` in: " + str(time.time() - sTime))
+
+    print("Generating image...")
+    sTime = time.time()
+    game = Game(result)
+    print("Executed `Game` in: " + str(time.time() - sTime))
+
+main(sys.argv[1:])
