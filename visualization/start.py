@@ -51,7 +51,7 @@ def to_screen(rTop, rBottom, lat, lon):
         rBottom.y + (rBottom.y - rTop.y) * perY - config["height"]
     )
 
-def mapping(file: str, ultra: bool) -> list:
+def mapping(file: str, ultra: bool, ratio: bool) -> list:
     """
     Reads an OSM file using Osmium and return a list of coordinates
     """
@@ -83,6 +83,19 @@ def mapping(file: str, ultra: bool) -> list:
         bounds = ((bx.top_right.lat, bx.top_right.lon), (bx.bottom_left.lat, bx.bottom_left.lon))
 
         bar.update(1)
+
+        # keeping mapping ratio
+        if ratio:
+            b = mercator(bounds[1][0], bounds[0][1]) # bottom right
+            t = mercator(bounds[0][0], bounds[1][1]) # top left
+
+            w = np.absolute(b[0] - t[0]) # mapping width
+            h = np.absolute(b[1] - t[1]) # mapping height
+
+            ir = h / w # inversed ratio
+
+            config["height"] = int(np.floor(config["width"] * ir))
+
 
         bottom = Reference(bounds[1][0], bounds[0][1], config["width"], config["height"])
         top = Reference(bounds[0][0], bounds[1][1], 0, 0)
@@ -119,13 +132,15 @@ class Game:
     def draw(self, screen):
         screen.fill((0, 0, 0))
 
-        for way in self.data:
-            for part in way.parts:
-                try:
-                    c = part.coords()
-                except Exception as e:
-                    continue
-                pygame.draw.line(screen, (255, 255, 255), c[0], c[1], 1)
+        with progressbar.ProgressBar(max_value=progressbar.UnknownLength) as bar:
+            for way in self.data: # this is quite heavy hehe :p
+                for part in way.parts:
+                    try:
+                        c = part.coords()
+                    except Exception as e:
+                        continue
+                    pygame.draw.line(screen, (255, 255, 255), c[0], c[1], 1)
+                    bar.update(1)
 
         pygame.display.flip()
         pygame.display.update()
@@ -178,6 +193,7 @@ def get_args():
     # Configuration
     config = parser.add_argument_group(title="Configuration of the rendering")
     config.add_argument('--ultra', help="Applies the ULTRA mode. Warning, launch it only on a tiny area if you don't want your PC to caught fire.", nargs="?", const=True, default=False, type=bool)
+    config.add_argument('--ratio', help="Should `pathos` keep the same width/height ratio ?", nargs="?", const=True, default=False, type=bool)
 
     return parser.parse_args()
 
@@ -186,7 +202,7 @@ def main():
 
     sTime = time.time()
     print("Generating map from file...")
-    result = mapping(args.i[0], args.ultra)
+    result = mapping(args.i[0], args.ultra, args.ratio)
     print("Executed `mapping` in: " + str(time.time() - sTime))
 
     print("Generating image...")
