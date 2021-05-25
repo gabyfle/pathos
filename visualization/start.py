@@ -191,7 +191,11 @@ def main():
 
     print("Generating image...")
     sTime = time.time()
-    game = Game(result, args.o[0])
+    try:
+        game = Game(result, args.o[0])
+    except Exception as e:
+        print("An error occurred while trying to generate the image: {}. Aborting.".format(str(e)))
+        sys.exit(1)
     print("Executed `Game` in: " + str(time.time() - sTime))
 
 main()

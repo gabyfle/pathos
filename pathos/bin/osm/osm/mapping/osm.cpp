@@ -88,4 +88,11 @@ namespace Mapping
     {
         return std::tuple<unsigned int, unsigned int, unsigned int>{this->count_ways(), this->count_nodes(), this->count_relations()};
     }
+
+    /**
+     * Osm::clear_ways
+     * Clear the ways that aren't usable by actual cars
+     * @return 
+     */
+    
 }

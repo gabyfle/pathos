@@ -29,9 +29,6 @@ extern "C" {
 
     #pragma region Counting
     CAMLprim value ocaml_osm_count(value);
-    CAMLprim value ocaml_osm_count_ways(value);
-    CAMLprim value ocaml_osm_count_nodes(value);
-    CAMLprim value ocaml_osm_count_relations(value);
     #pragma endregion Counting
 }
 
@@ -71,48 +68,6 @@ CAMLprim value ocaml_osm_from_file(value file)
     Osm* osm = new (Data_abstract_val(v)) Osm(fileName);
 
     CAMLreturn (to_value(osm));
-}
-
-/**
- * osm_count_ways
- * Returns the number of ways in the OSM map file
- */
-extern "C"
-CAMLprim value ocaml_osm_count_ways(value obj)
-{
-    CAMLparam1 (obj);
-
-    Osm osm = *to_osm(obj);    
-
-    CAMLreturn (Val_long(osm.count_ways()));
-}
-
-/**
- * osm_count_nodes
- * Returns the number of nodes in the OSM map file
- */
-extern "C"
-CAMLprim value ocaml_osm_count_nodes(value obj)
-{
-    CAMLparam1 (obj);
-
-    Osm osm = *to_osm(obj);    
-
-    CAMLreturn (Val_long(osm.count_nodes()));
-}
-
-/**
- * osm_count_relations
- * Returns the number of relations in the OSM map file
- */
-extern "C"
-CAMLprim value ocaml_osm_count_relations(value obj)
-{
-    CAMLparam1 (obj);
-
-    Osm osm = *to_osm(obj);
-
-    CAMLreturn (Val_long(osm.count_relations()));
 }
 
 /**
