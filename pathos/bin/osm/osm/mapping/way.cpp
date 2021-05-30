@@ -23,4 +23,19 @@ namespace Mapping
 
         this->length = osmium::geom::haversine::distance(nodes);
     }
+
+    unsigned long long Way::get_id()
+    {
+        return this->id;
+    }
+
+    std::string Way::get_type()
+    {
+        return this->type;
+    }
+
+    double Way::get_length()
+    {
+        return this->length;
+    }
 }

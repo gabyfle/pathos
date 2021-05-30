@@ -23,8 +23,6 @@
 using Index = osmium::index::map::FlexMem<osmium::unsigned_object_id_type, osmium::Location>;
 using LocationHandler = osmium::handler::NodeLocationsForWays<Index>;
 
-using IntTriplet = std::tuple<unsigned int, unsigned int, unsigned int>;
-
 namespace Mapping
 {
     /**
@@ -70,22 +68,12 @@ namespace Mapping
     }
 
     /**
-     * Osm::count_relations
-     * Counts the relations available in the current OSM file
-     * @return uint
-     */
-    unsigned int Osm::count_relations(void)
-    {
-        return this->dataHandler.crelations;
-    }
-
-    /**
      * Osm::count
-     * Counts ways, nodes and relations of the OSM file
-     * @return std::tuple<uint, uint, uint>
+     * Counts ways and nodes of the OSM file
+     * @return std::tuple<uint, uint>
      */
-    IntTriplet Osm::count(void)
+    std::tuple<unsigned int, unsigned int> Osm::count(void)
     {
-        return IntTriplet{this->count_ways(), this->count_nodes(), this->count_relations()};
+        return std::tuple<unsigned int, unsigned int>{this->count_ways(), this->count_nodes()};
     }
 }

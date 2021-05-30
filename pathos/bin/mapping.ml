@@ -13,6 +13,7 @@
 
 type osm
 
+type way (* internal abstract (c defined) type representing a way *)
 (*
  * Highways type
  *
@@ -34,4 +35,12 @@ external read : osm -> unit = "ocaml_osm_read"
 (* c_count
  * Count the number of ways, nodes and relations of the current OSM file 
  * Returns a TUPLE (ways * nodes * relations) *)
-external count : osm -> (int * int * int) = "ocaml_osm_count"
+external count : osm -> (int * int) = "ocaml_osm_count"
+
+(* c_way_id
+ * Returns the given way's id *)
+external way_id : way -> int64 = "ocaml_way_get_id"
+
+(* c_way_type
+ * Returns the given way's type *)
+external way_type : way -> string = "ocaml_way_get_type"

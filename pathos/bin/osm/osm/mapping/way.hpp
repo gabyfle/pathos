@@ -9,7 +9,6 @@
  */
 
 #include <string>
-#include <osmium/geom/util.hpp>
 #include <osmium/osm/way.hpp>
 
 namespace Mapping
@@ -22,6 +21,10 @@ namespace Mapping
             double length;
 
         public:
-            Way(const unsigned long long& id, const std::string& type, const osmium::WayNodeList& nodes);
+            Way() {};
+            Way(const unsigned long long&, const std::string&, const osmium::WayNodeList&);
+            unsigned long long get_id();
+            std::string get_type();
+            double get_length();
     };
 }

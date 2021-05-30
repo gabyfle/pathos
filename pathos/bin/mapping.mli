@@ -23,4 +23,4 @@ val read : osm -> unit
 
 (* Mapping.count osm
  * Counts the number of ways, nodes and relations in the OSM file *)
-val count : osm -> (int * int * int)
+val count : osm -> (int * int)

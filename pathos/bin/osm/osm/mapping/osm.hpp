@@ -27,37 +27,43 @@ namespace Mapping
      * Handle data of the OSM file
      */
     class DataHandler : public osmium::handler::Handler {
+
+        std::unordered_map<unsigned long long, unsigned int> nodes{};
+        std::unordered_map<unsigned long long, Way> ways{};
+
         public:
             unsigned int cways = 0;
             unsigned int cnodes = 0;
-            unsigned int crelations = 0;
 
-            std::unordered_map<unsigned long long, unsigned int> nodes{};
-            std::vector<Way> ways;
-
-            void way(const osmium::Way& way) noexcept
+            void way(const osmium::Way& w) noexcept
             {
                 ++cways;
 
-                const char* highway = way.tags()["highway"];
+                const char* highway = w.tags()["highway"];
                 if (!highway) { return; }
-                if (way.ends_have_same_id()) { return; }
+                if (w.ends_have_same_id()) { return; }
 
-                const osmium::WayNodeList& ndl = way.nodes();
+                const osmium::WayNodeList& ndl = w.nodes();
 
-                ways.push_back(Way(way.positive_id(), highway, ndl));
+                unsigned long long way_id = w.positive_id();
+
+                ways[way_id] = Way(way_id, highway, ndl);
 
                 for (const auto* nd = ndl.begin(); nd != ndl.end(); ++nd) {
-                    auto id = (*nd).positive_ref();
+                    auto id = nd->positive_ref();
                     auto exists = nodes.find(id);
-                     if (exists != nodes.end()) {
-                         nodes[id] += 1;
-                     } else nodes[id] = 1;
+                    if (exists != nodes.end()) {
+                        nodes[id] += 1;
+                    } else nodes[id] = 1;
                 }
             }
             
-            void node(const osmium::Node&) noexcept { ++cnodes; }        
-            void relation(const osmium::Relation&) noexcept { ++crelations; }
+            void node(const osmium::Node&) noexcept { ++cnodes; }
+
+            unsigned int get_node_count(unsigned long long id)
+            {
+                return this->nodes[id];
+            }
     };
 
     class Osm
@@ -76,7 +82,7 @@ namespace Mapping
             unsigned int count_nodes(void);
             unsigned int count_relations(void);
 
-            std::tuple<unsigned int, unsigned int, unsigned int> count(void); 
+            std::tuple<unsigned int, unsigned int> count(void); 
 
             #pragma endregion Counting
     };
