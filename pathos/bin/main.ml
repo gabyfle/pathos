@@ -11,6 +11,7 @@
 (*.-.. --- ...- . -..  /  .--. .- - .... --- ...  / .--. .-. --- .--- . -.-. -*)
 
 let () =
-    let osm = Mapping.create "map.osm" in
+    let osm = Mapping.create "bordeaux.osm.pbf" in
+    Mapping.read osm;
     match (Mapping.count osm) with
         | (a, b, c) -> Printf.printf "Ways: %d \nNodes: %d \nRelations: %d \n" a b c

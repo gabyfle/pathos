@@ -8,8 +8,14 @@
  * File: osm.hpp
  */
 
+#include "way.hpp"
+
+#include <iostream>
+
 #include <string>
 #include <tuple>
+#include <vector>
+#include <unordered_map>
 
 #include <osmium/io/any_input.hpp>
 #include <osmium/handler.hpp>
@@ -17,28 +23,52 @@
 namespace Mapping
 {
     /**
-     * CountHandler
-     * Handle counting of the differents data such as ways, relations and nodes
+     * DataHandler
+     * Handle data of the OSM file
      */
-    struct CountHandler : public osmium::handler::Handler {
-        unsigned int ways = 0;
-        void way(const osmium::Way&) noexcept { ++ways; }
+    class DataHandler : public osmium::handler::Handler {
+        public:
+            unsigned int cways = 0;
+            unsigned int cnodes = 0;
+            unsigned int crelations = 0;
 
-        unsigned int nodes = 0;
-        void node(const osmium::Node&) noexcept { ++nodes; }
+            std::unordered_map<unsigned long long, unsigned int> nodes{};
+            std::vector<Way> ways;
 
-        unsigned int relations = 0;
-        void relation(const osmium::Relation&) noexcept { ++relations; }
+            void way(const osmium::Way& way) noexcept
+            {
+                ++cways;
+
+                const char* highway = way.tags()["highway"];
+                if (!highway) { return; }
+                if (way.ends_have_same_id()) { return; }
+
+                const osmium::WayNodeList& ndl = way.nodes();
+
+                ways.push_back(Way(way.positive_id(), highway, ndl));
+
+                for (const auto* nd = ndl.begin(); nd != ndl.end(); ++nd) {
+                    auto id = (*nd).positive_ref();
+                    auto exists = nodes.find(id);
+                     if (exists != nodes.end()) {
+                         nodes[id] += 1;
+                     } else nodes[id] = 1;
+                }
+            }
+            
+            void node(const osmium::Node&) noexcept { ++cnodes; }        
+            void relation(const osmium::Relation&) noexcept { ++crelations; }
     };
 
     class Osm
     {
         private:
             osmium::io::File file;
-            CountHandler *countHandler;
+            DataHandler dataHandler;
             bool counted = false;
         public:
             Osm(const std::string& mapFile);
+            void read(void);
 
             #pragma region Counting
 

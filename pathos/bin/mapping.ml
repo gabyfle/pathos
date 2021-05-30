@@ -27,6 +27,10 @@ type highways = Freeway | Departmental | Street*)
  * Returns osm from a given file path *)
 external create : string -> osm = "ocaml_osm_from_file"
 
+(* c_read
+ * Reads the given OSM object and arrange data to prepare graph building *)
+external read : osm -> unit = "ocaml_osm_read"
+
 (* c_count
  * Count the number of ways, nodes and relations of the current OSM file 
  * Returns a TUPLE (ways * nodes * relations) *)

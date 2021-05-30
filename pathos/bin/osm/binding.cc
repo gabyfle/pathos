@@ -16,16 +16,16 @@
 using namespace Mapping;
 
 extern "C" {
-    #define CAML_NAME_SPACE
     #include <caml/mlvalues.h>
     #include <caml/memory.h>
     #include <caml/alloc.h>
     #include <caml/custom.h>
 
-    static value to_value(Osm*);
-    static Osm * to_osm(value);
+    static inline value to_value(Osm*);
+    static inline Osm * to_osm(value);
 
     CAMLprim value ocaml_osm_from_file(value);
+    CAMLprim void ocaml_osm_read(value);
 
     #pragma region Counting
     CAMLprim value ocaml_osm_count(value);
@@ -37,11 +37,9 @@ extern "C" {
  * @param Osm* p
  * @return value
  */
-static value to_value(Osm * p)
+static inline value to_value(Osm * p)
 {
-    value v = caml_alloc(sizeof(*p), Abstract_tag);
-    *((Osm **) Data_abstract_val(v)) = p;
-    return v;
+    return caml_copy_nativeint((intnat) p);
 }
 
 /**
@@ -49,9 +47,9 @@ static value to_value(Osm * p)
  * @param value
  * @return Osm*
  */
-static Osm * to_osm(value v)
+static inline Osm * to_osm(value v)
 {
-    return *((Osm **) Data_abstract_val(v));
+    return (Osm *) Nativeint_val(v);
 }
 
 /**
@@ -71,6 +69,22 @@ CAMLprim value ocaml_osm_from_file(value file)
 }
 
 /**
+ * osm_read
+ * Reads the data from the OSM file
+ * Returns ()
+ */
+extern "C"
+CAMLprim void ocaml_osm_read(value obj)
+{
+    CAMLparam1(obj);
+
+    Osm* osm = to_osm(obj);
+    osm->read();
+
+    CAMLreturn0;
+}
+
+/**
  * osm_count
  * Returns a TUPLE containing the number of ways, nodes and relations in the OSM map file
  */
@@ -80,10 +94,10 @@ CAMLprim value ocaml_osm_count(value obj)
     CAMLparam1 (obj);
     CAMLlocal1(tuple);
 
-    Osm osm = *to_osm(obj);
+    Osm* osm = to_osm(obj);
 
     /* Tuple containing (ways * nodes * relations) */
-    auto t = osm.count();
+    auto t = osm->count();
 
     tuple = caml_alloc_tuple(3);
 

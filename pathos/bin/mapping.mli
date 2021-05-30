@@ -17,6 +17,10 @@ type osm
  * Create a OSM type object from a .OSM file *)
 val create : string -> osm
 
+(* Mapping.read osm 
+ * Reads the given OSM object and arrange data to prepare graph building *)
+val read : osm -> unit
+
 (* Mapping.count osm
  * Counts the number of ways, nodes and relations in the OSM file *)
 val count : osm -> (int * int * int)

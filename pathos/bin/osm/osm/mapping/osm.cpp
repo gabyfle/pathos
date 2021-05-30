@@ -17,6 +17,13 @@
 #include <osmium/io/any_input.hpp>
 #include <osmium/visitor.hpp>
 #include <osmium/util/file.hpp>
+#include <osmium/index/map/flex_mem.hpp>
+#include <osmium/handler/node_locations_for_ways.hpp>
+
+using Index = osmium::index::map::FlexMem<osmium::unsigned_object_id_type, osmium::Location>;
+using LocationHandler = osmium::handler::NodeLocationsForWays<Index>;
+
+using IntTriplet = std::tuple<unsigned int, unsigned int, unsigned int>;
 
 namespace Mapping
 {
@@ -27,8 +34,19 @@ namespace Mapping
     Osm::Osm(const std::string& mapFile)
     {
         this->file = osmium::io::File{mapFile};
+    }
 
-        this->countHandler = new CountHandler;
+    /**
+     * Osm::read
+     * Reads the file and proceed the data into usable one
+     */
+    void Osm::read(void)
+    {
+        osmium::io::Reader reader{this->file, osmium::osm_entity_bits::node | osmium::osm_entity_bits::way};
+        Index index;
+        LocationHandler location{index};
+
+        osmium::apply(reader, location, this->dataHandler);
     }
 
     /**
@@ -38,13 +56,7 @@ namespace Mapping
      */
     unsigned int Osm::count_ways(void)
     {
-        osmium::io::Reader reader{this->file};
-        
-        if (!counted)
-            osmium::apply(reader, *this->countHandler);
-        this->counted = true;
-
-        return (*this->countHandler).ways;
+        return this->dataHandler.cways;
     }
 
     /**
@@ -54,13 +66,7 @@ namespace Mapping
      */
     unsigned int Osm::count_nodes(void)
     {
-        osmium::io::Reader reader{this->file};
-        
-        if (!counted)
-            osmium::apply(reader, (*this->countHandler));
-        this->counted = true;
-
-        return (*this->countHandler).nodes;
+        return this->dataHandler.cnodes;
     }
 
     /**
@@ -70,13 +76,7 @@ namespace Mapping
      */
     unsigned int Osm::count_relations(void)
     {
-        osmium::io::Reader reader{this->file};
-
-        if (!counted)
-            osmium::apply(reader, (*this->countHandler));
-        this->counted = true;
-
-        return (*this->countHandler).relations;
+        return this->dataHandler.crelations;
     }
 
     /**
@@ -84,15 +84,8 @@ namespace Mapping
      * Counts ways, nodes and relations of the OSM file
      * @return std::tuple<uint, uint, uint>
      */
-    std::tuple<unsigned int, unsigned int, unsigned int> Osm::count(void)
+    IntTriplet Osm::count(void)
     {
-        return std::tuple<unsigned int, unsigned int, unsigned int>{this->count_ways(), this->count_nodes(), this->count_relations()};
+        return IntTriplet{this->count_ways(), this->count_nodes(), this->count_relations()};
     }
-
-    /**
-     * Osm::clear_ways
-     * Clear the ways that aren't usable by actual cars
-     * @return 
-     */
-    
 }
