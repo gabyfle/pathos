@@ -13,5 +13,5 @@
 let () =
     let osm = Mapping.create "bordeaux.osm.pbf" in
     Mapping.read osm;
-    match (Mapping.count osm) with
-        | (a, b) -> Printf.printf "Ways: %d \nNodes: %d \n" a b
+    Mapping.big_testing osm;
+    Printf.printf "Finished %!"

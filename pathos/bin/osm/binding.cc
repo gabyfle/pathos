@@ -19,18 +19,29 @@ extern "C" {
     #include <caml/mlvalues.h>
     #include <caml/memory.h>
     #include <caml/alloc.h>
+    #include <caml/callback.h>
     #include <caml/custom.h>
 
     #define TO_VALUE(VAR) caml_copy_nativeint((intnat) VAR)
     #define TO_TYPE(TYPE, VAR) (TYPE *) Nativeint_val(VAR)
 
+    #pragma region OSM
     CAMLprim value ocaml_osm_from_file(value);
     CAMLprim void ocaml_osm_read(value);
+    CAMLprim void ocaml_osm_iter_ways(value, value);
+    #pragma endregion OSM
+
+    #pragma region Way
+    CAMLprim value ocaml_way_get_id(value);
+    CAMLprim value ocaml_way_get_type(value);
+    CAMLprim value ocaml_way_get_length(value);
+    #pragma endregion Way
 
     #pragma region Counting
     CAMLprim value ocaml_osm_count(value);
     #pragma endregion Counting
 }
+
 /**
  * osm_from_file
  * Returns osm type from a given file path
@@ -44,7 +55,7 @@ CAMLprim value ocaml_osm_from_file(value file)
     value v = caml_alloc(sizeof(Osm), Abstract_tag);
     Osm* osm = new (Data_abstract_val(v)) Osm(fileName);
 
-    CAMLreturn (TO_VALUE(osm));
+    CAMLreturn(TO_VALUE(osm));
 }
 
 /**
@@ -83,7 +94,33 @@ CAMLprim value ocaml_osm_count(value obj)
     Store_field(tuple, 0, std::get<0>(t));
     Store_field(tuple, 1, std::get<1>(t));
 
-    CAMLreturn (tuple);
+    CAMLreturn(tuple);
+}
+
+/**
+ * osm_iter_ways
+ * Iters throught all ways inside the file
+ * @param obj: OSM object that contains Ways
+ * @param func: function to apply to each way f: (int64 -> way -> unit)
+ */
+extern "C"
+CAMLprim void ocaml_osm_iter_ways(value obj, value func)
+{
+    CAMLparam2(obj, func);
+    Osm* osm = TO_TYPE(Osm, obj);
+
+    auto it = osm->get_ways();
+
+    for(const auto& o : it) {
+        /* CAMLlocal2(i, w); */
+        auto i = caml_copy_int64(o.first);
+        auto w = caml_alloc(sizeof(Way), Abstract_tag);
+        w = TO_VALUE(&o.second);
+
+        caml_callback2(func, i, w);
+    }
+
+    CAMLreturn0;
 }
 
 /**
@@ -101,7 +138,7 @@ CAMLprim value ocaml_way_get_id(value obj)
 
     id = caml_copy_int64(i);
 
-    CAMLreturn (id);
+    CAMLreturn(id);
 }
 
 /**
@@ -119,5 +156,23 @@ CAMLprim value ocaml_way_get_type(value obj)
 
     type = caml_copy_string(str);
 
-    CAMLreturn (type);
+    CAMLreturn(type);
+}
+
+/**
+ * way_get_length
+ * Returns the way's length
+ */
+extern "C"
+CAMLprim value ocaml_way_get_length(value obj)
+{
+    CAMLparam1(obj);
+    CAMLlocal1(length);
+
+    Way* way = TO_TYPE(Way, obj);
+    auto l = way->get_length();
+
+    length = caml_copy_double(l);
+
+    CAMLreturn(length);
 }

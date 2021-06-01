@@ -76,4 +76,16 @@ namespace Mapping
     {
         return std::tuple<unsigned int, unsigned int>{this->count_ways(), this->count_nodes()};
     }
+
+    /**
+     * Osm::get_ways()
+     * Returns an iterator throught file's ways (that starts at the first way)
+     * @return std::unordered_map<unsigned long long, Way>
+     */
+    std::unordered_map<unsigned long long, Way> Osm::get_ways()
+    {
+        auto ways = this->dataHandler.get_ways();
+
+        return *ways;
+    }
 }

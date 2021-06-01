@@ -64,6 +64,11 @@ namespace Mapping
             {
                 return this->nodes[id];
             }
+
+            std::unordered_map<unsigned long long, Way>* get_ways()
+            {
+                return &this->ways;
+            }
     };
 
     class Osm
@@ -75,6 +80,7 @@ namespace Mapping
         public:
             Osm(const std::string& mapFile);
             void read(void);
+            std::unordered_map<unsigned long long, Way> get_ways();
 
             #pragma region Counting
 

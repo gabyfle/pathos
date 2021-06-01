@@ -37,6 +37,10 @@ external read : osm -> unit = "ocaml_osm_read"
  * Returns a TUPLE (ways * nodes * relations) *)
 external count : osm -> (int * int) = "ocaml_osm_count"
 
+(* c_iter_ways
+ * Iterates through all ways *)
+external iter_ways : osm -> (int64 -> way -> unit) -> unit = "ocaml_osm_iter_ways"
+
 (* c_way_id
  * Returns the given way's id *)
 external way_id : way -> int64 = "ocaml_way_get_id"
