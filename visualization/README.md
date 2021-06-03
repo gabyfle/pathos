@@ -8,6 +8,16 @@ Pathfinding experimentations to improve escape from dangerous areas
 ## Escape visualization
 Helps visualize evacuation plans and their behavior on a population of points. This should not be taken a measure of the efficiency of the algorithms, it is used to get an idea of their behavior.
 
+## Showcase
+
+Some pictures generated with `pathos` are available here: https://image.gabyfle.me
+
+* Aquitaine: https://image.gabyfle.me/r/Aquitaine.png
+* Bordeaux: https://image.gabyfle.me/v/Bordeaux.png
+* New-York: https://image.gabyfle.me/v/New-York.png
+* Île-de-France: https://image.gabyfle.me/r/Ile-de-France.png
+* Paris: https://image.gabyfle.me/v/Paris.png
+
 ## Dependencies
 
 * We're using [`pygame`](https://www.pygame.org) to render simulations.
