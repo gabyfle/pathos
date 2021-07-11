@@ -4,4 +4,5 @@ CMakeCache.txt
 *.so
 Makefile
 CMakeFiles/*
+build/*
 command

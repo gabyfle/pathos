@@ -78,6 +78,16 @@ namespace Mapping
     }
 
     /**
+     * Osm::count_connected_nodes()
+     * Returns the number of connected nodes (ie. nodes that are connected to at least one way) in the given file
+     * @return int
+     */
+    int Osm::count_connected_nodes()
+    {
+        return this->dataHandler.get_connected_nodes_count();
+    }
+
+    /**
      * Osm::get_ways()
      * Returns an iterator throught file's ways (that starts at the first way)
      * @return std::unordered_map<unsigned long long, Way>

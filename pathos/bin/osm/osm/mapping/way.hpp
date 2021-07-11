@@ -9,6 +9,7 @@
  */
 
 #include <string>
+#include <vector>
 #include <osmium/osm/way.hpp>
 
 namespace Mapping
@@ -19,10 +20,14 @@ namespace Mapping
             unsigned long long id;
             std::string type;
             double length;
+            /* Way's nodes */
+            std::vector<Node> nodes;
 
         public:
             Way() {};
             Way(const unsigned long long&, const std::string&, const osmium::WayNodeList&);
+            void add_node(unsigned long long, double, double);
+            int get_nodes_count();
             unsigned long long get_id();
             std::string get_type();
             double get_length();

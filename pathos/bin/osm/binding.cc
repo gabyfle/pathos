@@ -28,6 +28,8 @@ extern "C" {
     #pragma region OSM
     CAMLprim value ocaml_osm_from_file(value);
     CAMLprim void ocaml_osm_read(value);
+    CAMLprim value ocaml_osm_count(value);
+    CAMLprim value ocaml_osm_nodes_connected(value);
     CAMLprim void ocaml_osm_iter_ways(value, value);
     #pragma endregion OSM
 
@@ -35,11 +37,8 @@ extern "C" {
     CAMLprim value ocaml_way_get_id(value);
     CAMLprim value ocaml_way_get_type(value);
     CAMLprim value ocaml_way_get_length(value);
+    CAMLprim value ocaml_way_get_nodes_count(value);
     #pragma endregion Way
-
-    #pragma region Counting
-    CAMLprim value ocaml_osm_count(value);
-    #pragma endregion Counting
 }
 
 /**
@@ -98,6 +97,24 @@ CAMLprim value ocaml_osm_count(value obj)
 }
 
 /**
+ * osm_nodes_connected
+ * Returns the number of connected nodes (ie. nodes that are connected to at least one way) in the given file
+ */
+CAMLprim value ocaml_osm_nodes_connected(value obj)
+{
+    CAMLparam1(obj);
+    CAMLlocal1(count);
+
+    Osm* osm = TO_TYPE(Osm, obj);
+
+    auto c = osm->count_connected_nodes();
+
+    count = caml_copy_int64(c);
+
+    CAMLreturn(count);
+}
+
+/**
  * osm_iter_ways
  * Iters throught all ways inside the file
  * @param obj: OSM object that contains Ways
@@ -142,6 +159,24 @@ CAMLprim value ocaml_way_get_id(value obj)
 }
 
 /**
+ * way_get_nodes_count
+ * Returns the way's node count as an int
+ */
+extern "C"
+CAMLprim value ocaml_way_get_nodes_count(value obj)
+{
+    CAMLparam1(obj);
+    CAMLlocal1(nodes);
+
+    Way* way = TO_TYPE(Way, obj);
+    auto i = way->get_nodes_count();
+
+    nodes = caml_copy_int64(i);
+
+    CAMLreturn(nodes);
+}
+
+/**
  * way_get_type
  * Returns the way type as a string
  */
@@ -161,7 +196,7 @@ CAMLprim value ocaml_way_get_type(value obj)
 
 /**
  * way_get_length
- * Returns the way's length
+ * Returns the way's length as a double
  */
 extern "C"
 CAMLprim value ocaml_way_get_length(value obj)

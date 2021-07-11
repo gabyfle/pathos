@@ -8,6 +8,9 @@
  * File: osm.hpp
  */
 
+#ifndef OSM_NODE
+    #include "node.hpp"
+#endif
 #include "way.hpp"
 
 #include <iostream>
@@ -51,10 +54,12 @@ namespace Mapping
 
                 for (const auto* nd = ndl.begin(); nd != ndl.end(); ++nd) {
                     auto id = nd->positive_ref();
+                    auto location = nd->location();
+                    ways[way_id].add_node(id, location.lon(), location.lat()); /* adding this node to the way obj */
                     auto exists = nodes.find(id);
                     if (exists != nodes.end()) {
                         nodes[id] += 1;
-                    } else nodes[id] = 1;
+                    } else nodes[id] = 1; 
                 }
             }
             
@@ -63,6 +68,11 @@ namespace Mapping
             unsigned int get_node_count(unsigned long long id)
             {
                 return this->nodes[id];
+            }
+
+            int get_connected_nodes_count()
+            {
+                return this->nodes.size();
             }
 
             std::unordered_map<unsigned long long, Way>* get_ways()
@@ -79,16 +89,18 @@ namespace Mapping
             bool counted = false;
         public:
             Osm(const std::string& mapFile);
-            void read(void);
+            void read();
             std::unordered_map<unsigned long long, Way> get_ways();
 
             #pragma region Counting
 
-            unsigned int count_ways(void);
-            unsigned int count_nodes(void);
-            unsigned int count_relations(void);
+            unsigned int count_ways();
+            unsigned int count_nodes();
+            unsigned int count_relations();
 
-            std::tuple<unsigned int, unsigned int> count(void); 
+            int count_connected_nodes();
+
+            std::tuple<unsigned int, unsigned int> count(); 
 
             #pragma endregion Counting
     };
