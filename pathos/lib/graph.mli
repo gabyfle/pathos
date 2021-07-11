@@ -19,9 +19,21 @@ val create: int -> graph
  * Returns the number of node in g *)
 val size: graph -> int
 
+(* Graph.add_node g id
+ * Adds an ID to the first node that hasn't one yet *)
+val add_node: graph -> int64 -> unit
+
 (* Graph.add_edge g a b f
  * Adds a new edge between a and b and that is externally incident to the node a with the capacity of f *)
 val add_edge: graph -> node -> node -> int -> unit
+
+(* Graph.has_node g id
+ * Determines if a graph has a node with the same id as the given one *)
+val has_node: graph -> int64 -> bool
+
+(* Graph.get_by_id g id
+ * Gets a node by it's id *)
+val get_by_id: graph -> int64 -> node
 
 (* Graph.del_edge g a b
  * Deletes the edge between a and b *)

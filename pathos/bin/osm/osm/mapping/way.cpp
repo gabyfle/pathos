@@ -29,6 +29,11 @@ namespace Mapping
 
     void Way::add_node(unsigned long long id, double lon, double lat)
     {
+        if (this->nodes.size() == 0)
+            this->start_id = id;
+
+        this->end_id = id;
+
         Node nd;
 
         nd.id = id;
@@ -38,9 +43,24 @@ namespace Mapping
         this->nodes.push_back(nd);
     }
 
+    unsigned long long Way::get_start()
+    {
+        return this->start_id;
+    }
+
+    unsigned long long Way::get_end()
+    {
+        return this->end_id;
+    }
+
     int Way::get_nodes_count()
     {
         return this->nodes.size();
+    }
+
+    std::vector<Node> Way::get_nodes()
+    {
+        return this->nodes;
     }
 
     unsigned long long Way::get_id()

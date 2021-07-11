@@ -37,8 +37,14 @@ extern "C" {
     CAMLprim value ocaml_way_get_id(value);
     CAMLprim value ocaml_way_get_type(value);
     CAMLprim value ocaml_way_get_length(value);
+    CAMLprim value ocaml_way_is_end(value, value);
+    CAMLprim void ocaml_way_iter_nodes(value, value);
     CAMLprim value ocaml_way_get_nodes_count(value);
     #pragma endregion Way
+
+    #pragma region Node
+    CAMLprim value ocaml_node_get_id(value);
+    #pragma endregion Node
 }
 
 /**
@@ -159,6 +165,50 @@ CAMLprim value ocaml_way_get_id(value obj)
 }
 
 /**
+ * way_is_end
+ * Returns whether or not a given id is the one of an end of the given way
+ * @param obj: Way object
+ * @param id: int64 value that represent a node id
+ */
+extern "C"
+CAMLprim value ocaml_way_is_end(value obj, value id)
+{
+    CAMLparam2(obj, id);
+    CAMLlocal1(b);
+
+    Way* way = TO_TYPE(Way, obj);
+    auto id = Int_val(id);
+    bool is_end = (way->get_start() == id || way->get_end() == id);
+
+    b = Val_bool(is_end);
+
+    CAMLreturn(b);
+}
+
+/**
+ * way_iter_nodes
+ * Iters throught all nodes inside a way
+ * @param obj: Way object that contains the nodes
+ * @param func: function to apply to each node f: (int64 -> node -> unit)
+ */
+extern "C"
+CAMLprim void ocaml_way_iter_nodes(value obj, value func)
+{
+    CAMLparam2(obj, func);
+    Way* way = TO_TYPE(Way, obj);
+
+    auto it = way->get_nodes();
+
+    for (const auto& o : it) {
+        auto i = caml_copy_int64(o.id);
+        auto n = caml_alloc(sizeof(Node), Abstract_tag);
+        n = TO_VALUE(&o);
+
+        caml_callback2(func, i, n);
+    }
+}
+
+/**
  * way_get_nodes_count
  * Returns the way's node count as an int
  */
@@ -210,4 +260,22 @@ CAMLprim value ocaml_way_get_length(value obj)
     length = caml_copy_double(l);
 
     CAMLreturn(length);
+}
+
+/**
+ * node_get_id
+ * Returns the node's id as an int64
+ * @param obj: the node object
+ */
+CAMLprim value ocaml_node_get_id(value obj)
+{
+    CAMLparam1(obj);
+    CAMLlocal1(id);
+
+    Node* nd = TO_TYPE(Node, obj);
+    auto i = nd->id;
+
+    id = caml_copy_int64(i);
+
+    CAMLreturn(id);
 }
