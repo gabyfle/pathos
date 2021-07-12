@@ -2,5 +2,5 @@
     (public_name pathos)
     (name main)
     (link_flags -cclib -lstdc++)
-    (libraries pathos cosmium)
+    (libraries graph cosmium)
 )

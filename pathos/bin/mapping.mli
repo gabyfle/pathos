@@ -24,3 +24,7 @@ val read : osm -> unit
 (* Mapping.count osm
  * Counts the number of ways, nodes and relations in the OSM file *)
 val count : osm -> (int * int)
+
+(* Mapping.build_graph osm 
+ * Builds an oriented and weighted graph from an .OSM file *)
+val build_graph : osm -> Graph.graph

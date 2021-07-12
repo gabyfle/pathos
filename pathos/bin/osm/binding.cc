@@ -38,6 +38,8 @@ extern "C" {
     CAMLprim value ocaml_way_get_type(value);
     CAMLprim value ocaml_way_get_length(value);
     CAMLprim value ocaml_way_is_end(value, value);
+    CAMLprim value ocaml_way_is_start(value, value);
+    CAMLprim value ocaml_way_is_end(value, value);
     CAMLprim void ocaml_way_iter_nodes(value, value);
     CAMLprim value ocaml_way_get_nodes_count(value);
     #pragma endregion Way
@@ -165,8 +167,50 @@ CAMLprim value ocaml_way_get_id(value obj)
 }
 
 /**
- * way_is_end
+ * way_is_extremity
  * Returns whether or not a given id is the one of an end of the given way
+ * @param obj: Way object
+ * @param id: int64 value that represent a node id
+ */
+extern "C"
+CAMLprim value ocaml_way_is_extremity(value obj, value id)
+{
+    CAMLparam2(obj, id);
+    CAMLlocal1(b);
+
+    Way* way = TO_TYPE(Way, obj);
+    auto i = Int_val(id);
+    bool is_end = (way->get_start() == id || way->get_end() == i);
+
+    b = Val_bool(is_end);
+
+    CAMLreturn(b);
+}
+
+/**
+ * way_is_start
+ * Returns whether or not a given id is the start of the given way
+ * @param obj: Way object
+ * @param id: int64 value that represent a node id
+ */
+extern "C"
+CAMLprim value ocaml_way_is_start(value obj, value id)
+{
+    CAMLparam2(obj, id);
+    CAMLlocal1(b);
+
+    Way* way = TO_TYPE(Way, obj);
+    auto i = Int_val(id);
+    bool is_start = way->get_start() == i;
+
+    b = Val_bool(is_start);
+
+    CAMLreturn(b);
+}
+
+/**
+ * way_is_end
+ * Returns whether or not a given id is the end of the given way
  * @param obj: Way object
  * @param id: int64 value that represent a node id
  */
@@ -177,8 +221,8 @@ CAMLprim value ocaml_way_is_end(value obj, value id)
     CAMLlocal1(b);
 
     Way* way = TO_TYPE(Way, obj);
-    auto id = Int_val(id);
-    bool is_end = (way->get_start() == id || way->get_end() == id);
+    auto i = Int_val(id);
+    bool is_end = way->get_end() == i;
 
     b = Val_bool(is_end);
 
@@ -200,6 +244,7 @@ CAMLprim void ocaml_way_iter_nodes(value obj, value func)
     auto it = way->get_nodes();
 
     for (const auto& o : it) {
+        std::cout << o.id << std::endl;
         auto i = caml_copy_int64(o.id);
         auto n = caml_alloc(sizeof(Node), Abstract_tag);
         n = TO_VALUE(&o);

@@ -23,6 +23,10 @@ val size: graph -> int
  * Adds an ID to the first node that hasn't one yet *)
 val add_node: graph -> int64 -> unit
 
+(* Graph.get_edges g 
+ * Returns the edges matrix of the graph *)
+val get_edges : graph -> int array array
+
 (* Graph.add_edge g a b f
  * Adds a new edge between a and b and that is externally incident to the node a with the capacity of f *)
 val add_edge: graph -> node -> node -> int -> unit

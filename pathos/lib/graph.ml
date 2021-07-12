@@ -8,14 +8,14 @@
 (*                                                             *)
 (** * * * ** ** * * * * * * * ** * * * ** * * * * * * * * * * **)
 
-type node = { key: int; id: int64 }
+type node = { key: int; mutable id: int64 }
 type graph = { edges: int array array; nodes: node array }
 
 exception Exit
 
 let create (n: int) =
     let edges = Array.make_matrix n n 0 in
-    let nodes = Array.init n (fun k -> { key = k; id = -1 }) in
+    let nodes = Array.init n (fun k -> { key = k; id = Int64.minus_one }) in
     { edges = edges; nodes = nodes }
 
 let size (g: graph) =
@@ -23,15 +23,19 @@ let size (g: graph) =
 
 let add_node (g: graph) (id: int64) =
     try
-        for i = 0 to (Array.length g.nodes) - 1 do
-            if g.nodes.(i).id <> - 1 then
-                g.nodes.(i).id = id;
+        for i = 0 to (Array.length g.nodes - 1) do
+            if g.nodes.(i).id = (Int64.minus_one) then begin
+                g.nodes.(i).id <- id;
                 raise Exit
-    with Exit ->
-        ()
+            end
+        done;
+    with Exit -> ()
 
 let add_edge (g: graph) (a: node) (b: node) (f: int) =
     g.edges.(a.key).(b.key) <- f
+
+let get_edges (g: graph) =
+    g.edges
 
 let has_node (g: graph) (id: int64) =
     try
@@ -43,7 +47,7 @@ let has_node (g: graph) (id: int64) =
         true
 
 let get_by_id (g: graph) (id: int64) =
-    let found = ref node in
+    let found = ref {key = 0; id = Int64.zero} in
     try
         for i = 0 to (Array.length g.nodes) - 1 do
             if g.nodes.(i).id = id then begin

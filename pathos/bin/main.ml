@@ -13,5 +13,12 @@
 let () =
     let osm = Mapping.create "bordeaux.osm.pbf" in
     Mapping.read osm;
-    Mapping.big_testing osm;
-    Printf.printf "Finished %!"
+    let g = Mapping.build_graph osm in
+    ignore (g);
+    let edges = Graph.get_edges g in
+    for i = 0 to Array.length edges - 1 do
+        for j = 0 to Array.length edges - 1 do
+            Printf.printf " %d " edges.(i).(j);
+        done;
+        Printf.printf "\n"
+    done;
