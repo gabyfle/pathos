@@ -1,6 +1,0 @@
-(executable
-    (public_name pathos)
-    (name main)
-    (link_flags -cclib -lstdc++)
-    (libraries graph cosmium)
-)
