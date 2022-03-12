@@ -19,17 +19,21 @@ void print(int lvl, char *msg)
     const char *ERROR_C = "\033[1;31m";
     const char *WARNING_C = "\033[0;33m";
     const char *SUCCESS_C = "\033[0;32m";
+    const char *INFO_C = "\033[0;034m";
     const char *DEFAULT_C = "\033[0m";
 
     switch (lvl)
     {
         case 1:
-            printf(SUCCESS_C);
+            printf(INFO_C);
             break;
         case 2:
-            printf(WARNING_C);
+            printf(SUCCESS_C);
             break;
         case 3:
+            printf(WARNING_C);
+            break;
+        case 4:
             printf(ERROR_C);
             break;
         default:

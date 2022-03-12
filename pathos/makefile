@@ -1,5 +1,5 @@
-engine: main.o map.o util.o
-	gcc -o engine main.o map.o util.o $(sdl2-config --cflags --libs) -llua5.4
+engine: main.o map.o config.o util.o
+	gcc -o engine main.o map.o config.o util.o $(sdl2-config --cflags --libs) -llua5.4
 
 main.o: main.c
 	gcc -c -Wall main.c $(sdl2-config --cflags --libs) -llua5.4
