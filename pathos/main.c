@@ -24,6 +24,10 @@ int main(int argc, char *argv [])
     lua_State *L = luaL_newstate();
     luaL_openlibs(L);
 
+    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+
     print(1, "Loading configuration files.");
 
     struct windowSize dim = get_window_size(L);
@@ -34,9 +38,27 @@ int main(int argc, char *argv [])
     print(1, "Using script: ");
     print(1, script);
 
-    print(1, "Configuration loaded!");
-    print(2, "Everything works perfectly.");
+    print(2, "Configuration loaded!");
 
+    char * win_title[256];
+    sprintf(win_title, "pathos engine - %s", script);
+
+    window = SDL_CreateWindow(
+        win_title,
+        SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_UNDEFINED,
+        dim.width,
+        dim.height,
+        SDL_WINDOW_OPENGL
+    );
+
+    if (window == NULL)
+        error(L, "An error occurred while trying to create the window: %s", SDL_GetError());
+
+    SDL_Delay(3000);
+    
+    SDL_DestroyWindow(window);
     lua_close(L);
+    SDL_Quit();
     return EXIT_SUCCESS;
 }

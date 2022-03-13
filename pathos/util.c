@@ -63,7 +63,7 @@ void error(lua_State *L, const char *fmt, ...)
     print(3, buffer);
 
     lua_close(L);
-    //SDL_Quit();
+    SDL_Quit();
 
     exit(EXIT_FAILURE);
 }

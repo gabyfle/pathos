@@ -8,15 +8,7 @@
 
 ## Building
 
-### OCaml files
-
-pathos is using `dune` as the main build system. To build the OCaml files, just launch `dune build` in your terminal at the root of the project.
-
-### C++ files
-
-Building the C++ files of pathos is a little more hard since (in my opinion) the build systems for C-lang are real pain in the ass.
-
-You'll need to first download the **Osmium** library, which is used to handle `.osm` files. I recommand using `vcpkg` by launching `vcpkg install osmium`.
+This project can be compiled using `make`. It relies on SDL 2.0 and the Lua 5.4 libraries to compile.
 
 ## References
 
