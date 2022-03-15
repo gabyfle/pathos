@@ -52,12 +52,31 @@ int main(int argc, char *argv [])
         SDL_WINDOW_OPENGL
     );
 
-    if (window == NULL)
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+
+    if (window == NULL || renderer == NULL)
         error(L, "An error occurred while trying to create the window: %s", SDL_GetError());
 
-    SDL_Delay(3000);
+    if(0 != SDL_SetRenderDrawColor(renderer, colors.background.r, colors.background.g, colors.background.b, colors.background.a))
+    {
+        error(L, "Erreur SDL_SetRenderDrawColor : %s", SDL_GetError());
+
+    }
     
-    SDL_DestroyWindow(window);
+    if(0 != SDL_RenderClear(renderer))
+    {
+        error(L, "Erreur SDL_SetRenderDrawColor : %s", SDL_GetError());
+    }
+
+    SDL_Delay(500);
+    SDL_RenderPresent(renderer);
+    SDL_Delay(500);
+    
+    if(renderer != NULL)
+        SDL_DestroyRenderer(renderer);
+    if (window != NULL)
+        SDL_DestroyWindow(window);
+    
     lua_close(L);
     SDL_Quit();
     return EXIT_SUCCESS;
