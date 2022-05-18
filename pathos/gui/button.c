@@ -7,6 +7,9 @@
 
 #include "button.h"
 
+int buttons_count = 0;
+struct Button buttons[256];
+
 /**
  * @brief Draw a button into the screen
  * 
@@ -53,9 +56,18 @@ void button_draw(SDL_Rect dim, SDL_Color bg, SDL_Color txt_color, char * txt, SD
  * 
  * @param f 
  */
-void button_do_click(void (*f)(void))
+void button_do_click(struct Button btn, SDL_Event* evnt)
 {
-    print(1, "You clicked on a button!");
+    if(evnt->type == SDL_MOUSEBUTTONDOWN) {
+        if(evnt->button.button == SDL_BUTTON_LEFT &&
+                evnt->button.x >= btn.dim.x &&
+                evnt->button.x <= (btn.dim.x + btn.dim.w) &&
+                evnt->button.y >= btn.dim.y &&
+                evnt->button.y <= (btn.dim.y + btn.dim.h)
+        ) {
+                    btn.do_click();
+        }
+    }
 }
 
 /**
@@ -65,5 +77,12 @@ void button_do_click(void (*f)(void))
  */
 void button_create(struct Button button, SDL_Renderer * renderer)
 {
-    button_draw(button.dim, button.background, button.txt_color, button.txt, renderer);    
+    button_draw(button.dim, button.background, button.txt_color, button.txt, renderer);
+    if (buttons_count < sizeof(buttons)/sizeof(*(buttons))) {
+        buttons[buttons_count] = button;
+
+        buttons_count++;
+    } else {
+        error(NULL, "An error happenned while trying to create a new button: max limit reached.");
+    }
 }

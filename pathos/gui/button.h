@@ -22,3 +22,4 @@ struct Button {
 };
 
 void button_create(struct Button, SDL_Renderer*);
+void button_do_click(struct Button, SDL_Event*);
