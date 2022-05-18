@@ -8,6 +8,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
+#include <stdlib.h>
+
 #include "../util.h"
 
 struct Button {
@@ -19,3 +21,4 @@ struct Button {
     void (*do_click)(void);
 };
 
+void button_create(struct Button, SDL_Renderer*);

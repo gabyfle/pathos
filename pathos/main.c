@@ -18,7 +18,15 @@
 
 #include "util.h"
 #include "config.h"
+
+#include "gui.h"
+
 #include "map.h"
+
+void f(void)
+{
+    return;
+}
 
 int main(int argc, char *argv [])
 {
@@ -34,6 +42,33 @@ int main(int argc, char *argv [])
 
     struct windowSize dim = get_window_size(L);
     struct windowColors colors = get_window_colors(L);
+
+    SDL_Rect dimension;
+    dimension.x = 0;
+    dimension.y = 0;
+    dimension.h = 50;
+    dimension.w = 200;
+
+    SDL_Color bg;
+    bg.r = 255;
+    bg.g = 0;
+    bg.b = 0;
+    bg.a = 255;
+
+    SDL_Color txt;
+    txt.r = 255;
+    txt.g = 255;
+    txt.b = 0;
+    txt.a = 255;
+
+    char text[] = "Click me !";
+
+    struct Button btn;
+    btn.dim = dimension;
+    btn.background = bg;
+    btn.txt_color = txt;
+    btn.do_click = f;
+    btn.txt = text;
 
     char * script = get_script(L);
 
@@ -59,6 +94,23 @@ int main(int argc, char *argv [])
     if (window == NULL || renderer == NULL)
         error(L, "An error occurred while trying to create the window: %s", SDL_GetError());
     
+    int quit = 0;
+
+    button_create(btn, renderer);
+
+    while(!quit) {
+        SDL_Event evt;    // no need for new/delete, stack is fine
+
+        // event loop and draw loop are separate things, don't mix them
+        while(SDL_PollEvent(&evt)) {
+            // quit on close, window close, or 'escape' key hit
+            if(evt.type == SDL_QUIT ||
+                    (evt.type == SDL_WINDOWEVENT && evt.window.event == SDL_WINDOWEVENT_CLOSE) ||
+                    (evt.type == SDL_KEYDOWN && evt.key.keysym.sym == SDLK_ESCAPE)) {
+                quit = 1;}
+                SDL_RenderPresent(renderer);
+        }
+    }
     
 
     if(renderer != NULL)

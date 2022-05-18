@@ -20,13 +20,30 @@ void button_draw(SDL_Rect dim, SDL_Color bg, SDL_Color txt_color, char * txt, SD
     SDL_SetRenderDrawColor(renderer, bg.r, bg.g, bg.b, bg.a);
     SDL_RenderFillRect(renderer, &dim);
 
-    TTF_Font * Ubuntu = TTF_OpenFont("ubuntu.ttf", 24);
+    SDL_Rect txt_rect = dim;
 
-    SDL_Surface* txt_surface = TTF_RenderText_Solid(Ubuntu, txt, txt_color); 
+    TTF_Font * Ubuntu = TTF_OpenFont("ubuntu.ttf", 16);
+
+    int txt_w;
+    int txt_h;
+
+    SDL_Surface* txt_surface = TTF_RenderText_Blended(Ubuntu, txt, txt_color); 
     SDL_Texture* txt_texture = SDL_CreateTextureFromSurface(renderer, txt_surface);
 
-    SDL_RenderCopy(renderer, txt_texture, NULL, &dim);
+    txt_w = txt_surface->w;
+    txt_h = txt_surface->h;
+
+    txt_rect.w = txt_w;
+    txt_rect.h = txt_h;
+
+    txt_rect.x = dim.x + (abs(dim.w - txt_rect.w) / 2);
+    txt_rect.y = dim.y + (abs(dim.h - txt_rect.h) / 2);
+
+    SDL_RenderCopy(renderer, txt_texture, NULL, &txt_rect);
     SDL_FreeSurface(txt_surface);
+
+    SDL_RenderPresent(renderer);
+
     SDL_DestroyTexture(txt_texture);
 
     TTF_CloseFont(Ubuntu);
@@ -48,6 +65,5 @@ void button_do_click(void (*f)(void))
  */
 void button_create(struct Button button, SDL_Renderer * renderer)
 {
-    button_draw(button.dim, button.background, button.txt_color, button.txt, renderer)
-    
+    button_draw(button.dim, button.background, button.txt_color, button.txt, renderer);    
 }
