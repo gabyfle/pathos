@@ -6,6 +6,7 @@
 **/
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 #include <lua5.4/lua.h>
 #include <lua5.4/lauxlib.h>
@@ -25,6 +26,7 @@ int main(int argc, char *argv [])
     luaL_openlibs(L);
 
     SDL_Init(SDL_INIT_VIDEO);
+    TTF_Init();
     SDL_Window *window;
     SDL_Renderer *renderer;
 
