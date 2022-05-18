@@ -16,10 +16,12 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
+#include "defines.h"
 #include "util.h"
 #include "config.h"
 
 #include "gui.h"
+#include "menu.h"
 
 #include "map.h"
 
@@ -64,6 +66,12 @@ int main(int argc, char *argv [])
 
     if (window == NULL || renderer == NULL)
         error(L, "An error occurred while trying to create the window: %s", SDL_GetError());
+
+    struct Data data = {
+        .script = script
+    };
+
+    draw_menu(data, dim, renderer);
     
     int quit = 0;
 

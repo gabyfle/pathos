@@ -1,0 +1,202 @@
+/**
+ * 
+ * pathos - Simulation engine 
+ * 2022 - Gabriel Santamaria
+ * 
+**/
+
+#include "menu.h"
+
+/**
+ * @brief Draw the global background color of the pathos main window
+ * 
+ * @param color 
+ * @param renderer 
+ */
+void menu_background(SDL_Color color, int w_height, SDL_Renderer* renderer)
+{
+    if(0 != SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a))
+        error(NULL, "An error occurred while trying to set a new render color: %s", SDL_GetError());
+
+    SDL_Rect menu;
+             menu.x = 0;
+             menu.y = 0;
+             menu.h = w_height;
+             menu.w = 300;
+
+    SDL_RenderFillRect(renderer, &menu);
+    SDL_RenderPresent(renderer);
+}
+
+void close_do_click(void)
+{
+    print(4, "Quitting pathos. Have a good day!");
+    SDL_Quit();
+    exit(EXIT_SUCCESS);
+}
+
+void start_engine(void)
+{
+    print(2, "Engine is starting...");
+}
+
+/**
+ * @brief Adds buttons and stuff like that to the menu
+ * 
+ * @param renderer 
+ */
+void add_gui_elements(int w_height, SDL_Renderer* renderer)
+{
+    SDL_Color red = {.r=220, .g=53, .b=69, .a=255};
+    SDL_Color green = {.r=40, .g=167, .b=69, .a=255};
+    SDL_Color white = {.r=255, .g=255, .b=255, .a=255};
+
+    SDL_Rect close_rect = {
+        .h = 40,
+        .w = 250,
+        .y = w_height - 65,
+        .x = 25
+    };
+
+    SDL_Rect start_rect = {
+        .h = 55,
+        .w = 250,
+        .y = 220,
+        .x = 25
+    };
+
+    struct Button close_btn = {
+        .background = red,
+        .txt_color = white,
+        .dim = close_rect,
+        .do_click = close_do_click,
+        .txt = "Quit pathos"
+    };
+
+    struct Button start_btn = {
+        .background = green,
+        .txt_color = white,
+        .dim = start_rect,
+        .do_click = start_engine,
+        .txt = "Start simulation"
+    };
+
+    button_create(start_btn, renderer);
+    button_create(close_btn, renderer);
+}
+
+/**
+ * @brief Draw the main menu of pathos
+ * 
+ * @param background
+ * @param text_color 
+ * @param renderer 
+ */
+void draw_menu(struct Data data, struct windowSize w_size, SDL_Renderer* renderer)
+{
+    SDL_Color background = {
+        .r = 109,
+        .g = 59,
+        .b = 109,
+        .a = 255
+    };
+
+    SDL_Color txt_bg_c = {
+        .r = 89,
+        .g = 39,
+        .b = 89,
+        .a = 255
+    };
+
+    SDL_Color txt_color = {
+        .r = 255,
+        .g = 255,
+        .b = 255,
+        .a = 255
+    };
+
+    menu_background(background, w_size.height, renderer);
+    add_gui_elements(w_size.height, renderer);
+
+    SDL_Rect txt_rect;
+
+    TTF_Font * Title = TTF_OpenFont("ubuntu.ttf", 34);
+    TTF_Font * Categories = TTF_OpenFont("ubuntu.ttf", 17);
+    TTF_Font * Data = TTF_OpenFont("ubuntu.ttf", 14);
+
+    int txt_w;
+    int txt_h;
+
+    SDL_Surface* txt_surface = TTF_RenderText_Blended(Title, "pathos", txt_color); 
+    SDL_Texture* txt_texture = SDL_CreateTextureFromSurface(renderer, txt_surface);
+
+    txt_w = txt_surface->w;
+    txt_h = txt_surface->h;
+
+    txt_rect.w = txt_w;
+    txt_rect.h = txt_h;
+
+    txt_rect.x = (abs(300 - txt_rect.w) / 2);
+    txt_rect.y = 65;
+
+    SDL_RenderCopy(renderer, txt_texture, NULL, &txt_rect);
+
+    txt_surface = TTF_RenderText_Blended(Categories, "Using script:", txt_color);
+    txt_texture = SDL_CreateTextureFromSurface(renderer, txt_surface);
+
+    txt_w = txt_surface->w;
+    txt_h = txt_surface->h;
+
+    txt_rect.w = txt_w;
+    txt_rect.h = txt_h;
+
+    txt_rect.x = 25;
+    txt_rect.y = 150;
+
+    SDL_RenderCopy(renderer, txt_texture, NULL, &txt_rect);
+
+    txt_surface = TTF_RenderText_Blended(Data, data.script, txt_color);
+    txt_texture = SDL_CreateTextureFromSurface(renderer, txt_surface);
+
+    txt_w = txt_surface->w;
+    txt_h = txt_surface->h;
+
+    txt_rect.w = txt_w;
+    txt_rect.h = txt_h;
+
+    txt_rect.x = 30;
+    txt_rect.y = 180;
+
+    SDL_Rect txt_background = txt_rect;
+    txt_background.x -= 5;
+    txt_background.y -= 5;
+    txt_background.h += 10;
+    txt_background.w = 300 - 2 * txt_background.x;
+
+    SDL_SetRenderDrawColor(renderer, txt_bg_c.r, txt_bg_c.g, txt_bg_c.b, txt_bg_c.a);
+    SDL_RenderFillRect(renderer, &txt_background);
+
+    SDL_RenderCopy(renderer, txt_texture, NULL, &txt_rect);
+
+    txt_surface = TTF_RenderText_Blended(Data, "Gabriel Santamaria", txt_color);
+    txt_texture = SDL_CreateTextureFromSurface(renderer, txt_surface);
+
+    txt_w = txt_surface->w;
+    txt_h = txt_surface->h;
+
+    txt_rect.w = txt_w;
+    txt_rect.h = txt_h;
+
+    txt_rect.x = (abs(300 - txt_rect.w) / 2);
+    txt_rect.y = 110;
+
+    SDL_RenderCopy(renderer, txt_texture, NULL, &txt_rect);
+
+    SDL_RenderPresent(renderer);
+    SDL_FreeSurface(txt_surface);
+    SDL_DestroyTexture(txt_texture);
+
+    TTF_CloseFont(Title);
+    TTF_CloseFont(Categories);
+    TTF_CloseFont(Data);
+}

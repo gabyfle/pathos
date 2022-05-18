@@ -11,20 +11,10 @@
 #include <lua5.4/lauxlib.h>
 #include <lua5.4/lualib.h>
 
+#include "defines.h"
 #include "util.h"
 
 #define CONFIG_FILE "config.lua"
-
-struct windowSize {
-    unsigned int width;
-    unsigned int height;
-};
-
-struct windowColors {
-    SDL_Color background;
-    SDL_Color walls;
-    SDL_Color units;
-};
 
 char * get_script(lua_State *L);
 
