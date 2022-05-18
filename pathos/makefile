@@ -1,5 +1,6 @@
 engine: main.o map.o config.o util.o
 	gcc -o engine main.o map.o config.o util.o -llua5.4 -lSDL2main -lSDL2
+	rm -f *.o *~
 
 main.o: main.c
 	gcc -c -Wall main.c -llua5.4 -lSDL2main -lSDL2

@@ -10,8 +10,8 @@ local print = print
 
 math.randomseed(os.time())
 
-local height = 400 -- each map is 400x400 tile
-local width  = 400
+local width  = 50
+local height = 50 -- each map is 50x50 tiles
 
 local grid = {}
 

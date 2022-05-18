@@ -56,22 +56,9 @@ int main(int argc, char *argv [])
 
     if (window == NULL || renderer == NULL)
         error(L, "An error occurred while trying to create the window: %s", SDL_GetError());
-
-    if(0 != SDL_SetRenderDrawColor(renderer, colors.background.r, colors.background.g, colors.background.b, colors.background.a))
-    {
-        error(L, "Erreur SDL_SetRenderDrawColor : %s", SDL_GetError());
-
-    }
     
-    if(0 != SDL_RenderClear(renderer))
-    {
-        error(L, "Erreur SDL_SetRenderDrawColor : %s", SDL_GetError());
-    }
-
-    SDL_Delay(500);
-    SDL_RenderPresent(renderer);
-    SDL_Delay(500);
     
+
     if(renderer != NULL)
         SDL_DestroyRenderer(renderer);
     if (window != NULL)

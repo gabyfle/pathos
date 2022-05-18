@@ -9,7 +9,7 @@
 
 /**
  * print()
- * Displays a message with a certain level (error, success, warning)
+ * @brief Displays a message with a certain level (error, success, warning)
  * @param int lvl level of the message
  * @param char* msg message to be displayed
  * @return void
@@ -46,7 +46,7 @@ void print(int lvl, char *msg)
 
 /**
  * error()
- * Displays the error message and quit the program
+ * @brief Displays the error message and quit the program
  * @param lua_State* the Lua state to close
  * @param char * the format string
  * @return void
@@ -62,7 +62,8 @@ void error(lua_State *L, const char *fmt, ...)
 
     print(3, buffer);
 
-    lua_close(L);
+    if (! (L == NULL))
+        lua_close(L);
     SDL_Quit();
 
     exit(EXIT_FAILURE);
