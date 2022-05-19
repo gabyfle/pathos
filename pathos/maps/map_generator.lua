@@ -10,8 +10,8 @@ local print = print
 
 math.randomseed(os.time())
 
-local width  = 50
-local height = 50 -- each map is 50x50 tiles
+local width  = 20
+local height = 20 -- each map is 50x50 tiles
 
 local grid = {}
 
@@ -74,7 +74,7 @@ end
 local function write_map(path, grid, safe, size)
     local file = io.open(path, "w+")
     if not file then return end
-    file:write(tostring(size) .. "\n")
+    file:write(tostring(size * 2 + 1) .. "\n")
     file:write(tostring(safe) .. "\n")
 
     local s = {}

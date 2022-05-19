@@ -5,7 +5,11 @@
  * 
 **/
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "defines.h"
 
-void draw_map(void);
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+
+void map_handle(struct Data, struct windowSize, struct windowColors, SDL_Renderer*);

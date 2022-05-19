@@ -13,18 +13,29 @@
  * @param color 
  * @param renderer 
  */
-void menu_background(SDL_Color color, int w_height, SDL_Renderer* renderer)
+void menu_background(SDL_Color color, SDL_Color txt_bg_c, int w_height, SDL_Renderer* renderer)
 {
-    if(0 != SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a))
-        error(NULL, "An error occurred while trying to set a new render color: %s", SDL_GetError());
-
     SDL_Rect menu;
              menu.x = 0;
              menu.y = 0;
              menu.h = w_height;
              menu.w = 300;
 
+    SDL_Rect separator = {
+        .x = 298,
+        .y = 0,
+        .w = 4,
+        .h = w_height
+    };
+
+    if(0 != SDL_SetRenderDrawColor(renderer, txt_bg_c.r, txt_bg_c.g, txt_bg_c.b, txt_bg_c.a))
+        error(NULL, "An error occurred while trying to set a new render color: %s", SDL_GetError());
+    SDL_RenderFillRect(renderer, &separator);
+
+    if(0 != SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a))
+        error(NULL, "An error occurred while trying to set a new render color: %s", SDL_GetError());
     SDL_RenderFillRect(renderer, &menu);
+
     SDL_RenderPresent(renderer);
 }
 
@@ -166,7 +177,7 @@ void draw_menu(struct Data data, struct windowSize w_size, SDL_Renderer* rendere
         .a = 255
     };
 
-    menu_background(background, w_size.height, renderer);
+    menu_background(background, txt_bg_c, w_size.height, renderer);
     add_gui_elements(w_size.height, renderer);
 
     SDL_Rect txt_rect;

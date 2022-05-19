@@ -73,6 +73,7 @@ int main(int argc, char *argv [])
         .map = map
     };
 
+    map_handle(data, dim, colors, renderer);
     draw_menu(data, dim, renderer);
     
     int quit = 0;
@@ -91,7 +92,6 @@ int main(int argc, char *argv [])
 
             SDL_RenderPresent(renderer);
         }
-        
     }
     
 
