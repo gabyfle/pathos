@@ -51,23 +51,134 @@ void button_draw(SDL_Rect dim, SDL_Color bg, SDL_Color txt_color, char * txt, SD
 
     TTF_CloseFont(Ubuntu);
 }
+
+void button_draw_border(struct Button btn, SDL_Color color, SDL_Renderer * renderer)
+{
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+
+    SDL_Rect left = {
+        .x = btn.dim.x,
+        .y = btn.dim.y,
+        .w = 5,
+        .h = btn.dim.h
+    };
+
+    SDL_Rect right = {
+        .x = btn.dim.x + btn.dim.w - 5,
+        .y = btn.dim.y,
+        .w = 5,
+        .h = btn.dim.h
+    };
+
+    SDL_Rect top = {
+        .x = btn.dim.x,
+        .y = btn.dim.y,
+        .w = btn.dim.w,
+        .h = 5
+    };
+
+    SDL_Rect bottom = {
+        .x = btn.dim.x,
+        .y = btn.dim.y + btn.dim.h - 5,
+        .w = btn.dim.w,
+        .h = 5
+    };
+
+    SDL_RenderFillRect(renderer, &left);
+    SDL_RenderFillRect(renderer, &right);
+    SDL_RenderFillRect(renderer, &top);
+    SDL_RenderFillRect(renderer, &bottom);
+}
+
+/**
+ * @brief Draw a lighter border when button is overed
+ * 
+ * @param btn 
+ * @param renderer 
+ */
+void button_hover(struct Button btn, SDL_Renderer * renderer)
+{
+    int x, y;
+
+    SDL_PumpEvents();
+    SDL_GetMouseState(&x, &y);
+
+    if (x >= btn.dim.x &&
+            x <= (btn.dim.x + btn.dim.w) &&
+            y >= btn.dim.y &&
+            y <= (btn.dim.y + btn.dim.h)
+        ) {
+        SDL_Color hover = btn.background;
+        hover.r += 20;
+        hover.g += 20;
+        hover.b += 20;
+        button_draw_border(btn, hover, renderer);
+    } else {
+        button_draw_border(btn, btn.background, renderer);
+    }
+}
+
+/**
+ * @brief Draw a darker border when button is pressed
+ * 
+ * @param btn 
+ * @param renderer 
+ */
+void button_pressed(struct Button btn, SDL_Renderer * renderer)
+{
+    int x, y;
+    Uint32 buttons;
+
+    SDL_PumpEvents();
+    buttons = SDL_GetMouseState(&x, &y);
+
+    if ((x >= btn.dim.x &&
+            x <= (btn.dim.x + btn.dim.w) &&
+            y >= btn.dim.y &&
+            y <= (btn.dim.y + btn.dim.h)
+        ) && ((buttons & SDL_BUTTON_LMASK) != 0))
+    {
+        SDL_Color pressed = btn.background;
+        pressed.r -= 20;
+        pressed.g -= 20;
+        pressed.b -= 20;
+        button_draw_border(btn, pressed, renderer);
+    }
+}
+
 /**
  * @brief On click button event
  * 
  * @param f 
  */
-void button_do_click(struct Button btn, SDL_Event* evnt)
-{
-    if(evnt->type == SDL_MOUSEBUTTONDOWN) {
-        if(evnt->button.button == SDL_BUTTON_LEFT &&
+void button_do_click(struct Button btn, SDL_Event* evnt, SDL_Renderer * renderer)
+{   
+    if (evnt->type == SDL_MOUSEBUTTONDOWN) {
+        if (evnt->button.button == SDL_BUTTON_LEFT &&
                 evnt->button.x >= btn.dim.x &&
                 evnt->button.x <= (btn.dim.x + btn.dim.w) &&
                 evnt->button.y >= btn.dim.y &&
                 evnt->button.y <= (btn.dim.y + btn.dim.h)
         ) {
-                    btn.do_click();
+            btn.pressed = true;
+            btn.do_click();
+        }
+    } else if (evnt->type == SDL_MOUSEBUTTONUP) {
+        btn.pressed = false;
+    }
+
+    if (evnt->type == SDL_MOUSEMOTION) {
+        if (evnt->motion.x >= btn.dim.x &&
+            evnt->motion.x <= (btn.dim.x + btn.dim.w) &&
+            evnt->motion.y >= btn.dim.y &&
+            evnt->motion.y <= (btn.dim.y + btn.dim.h)
+        ) {
+            btn.hover = true;
         }
     }
+
+    button_hover(btn, renderer);
+    button_pressed(btn, renderer);
 }
 
 /**

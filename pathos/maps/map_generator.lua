@@ -71,8 +71,10 @@ end
 
 --- write_map
 -- Write the grid into the map so that we can use it inside the Pathos engine
-local function write_map(path, grid, safe)
+local function write_map(path, grid, safe, size)
     local file = io.open(path, "w+")
+    if not file then return end
+    file:write(tostring(size) .. "\n")
     file:write(tostring(safe) .. "\n")
 
     local s = {}
@@ -90,5 +92,6 @@ local function write_map(path, grid, safe)
 end
 
 local safe = random(1, math.floor(height / 2)) -- safe area
+local size = width or height
 rec_bracktraking(width, height)
-write_map("default.txt", grid, safe)
+write_map("default.txt", grid, safe, size)

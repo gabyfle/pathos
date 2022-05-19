@@ -30,6 +30,28 @@ char * get_script(lua_State *L)
 }
 
 /**
+ * get_map
+ * Gets the simulation map that we should use for the engine
+ * @param lua_State* L the Lua state
+ * @return char*
+ */
+char * get_map(lua_State *L)
+{
+    char * map;
+
+    if (luaL_loadfile(L, CONFIG_FILE) || lua_pcall(L, 0, 0, 0))
+        error(L, "Unable to load config file: %s", lua_tostring(L, -1));
+
+    lua_getglobal(L, "Map");
+    if (!lua_isstring(L, -1))
+        error(L, "Map is a %s but a string were expected. Please, see manual to have a proper config file.", lua_typename(L, lua_type(L, -1)));
+
+    map = lua_tostring(L, -1);
+
+    return map;
+}
+
+/**
  * get_window_size
  * Gets the Window size from the configuration file (config.lua) and returns it inside a struct
  * @param lua_State* L the Lua state

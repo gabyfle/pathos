@@ -61,7 +61,7 @@ void add_gui_elements(int w_height, SDL_Renderer* renderer)
     SDL_Rect start_rect = {
         .h = 55,
         .w = 250,
-        .y = 220,
+        .y = 280,
         .x = 25
     };
 
@@ -83,6 +83,57 @@ void add_gui_elements(int w_height, SDL_Renderer* renderer)
 
     button_create(start_btn, renderer);
     button_create(close_btn, renderer);
+}
+
+void draw_data(char * data_title, const char data[], SDL_Point pos, SDL_Color txt_bg_c, SDL_Color txt_color, SDL_Renderer * renderer)
+{
+    TTF_Font * Categories = TTF_OpenFont("ubuntu.ttf", 17);
+    TTF_Font * Data = TTF_OpenFont("ubuntu.ttf", 14);
+
+    SDL_Rect txt_rect;
+
+    int txt_w;
+    int txt_h;
+
+    SDL_Surface* txt_surface = TTF_RenderText_Blended(Categories, data_title, txt_color);
+    SDL_Texture* txt_texture = SDL_CreateTextureFromSurface(renderer, txt_surface);
+
+    txt_w = txt_surface->w;
+    txt_h = txt_surface->h;
+
+    txt_rect.w = txt_w;
+    txt_rect.h = txt_h;
+
+    txt_rect.x = pos.x;
+    txt_rect.y = pos.y;
+
+    SDL_RenderCopy(renderer, txt_texture, NULL, &txt_rect);
+
+    txt_surface = TTF_RenderText_Blended(Data, data, txt_color);
+    txt_texture = SDL_CreateTextureFromSurface(renderer, txt_surface);
+
+    txt_w = txt_surface->w;
+    txt_h = txt_surface->h;
+
+    txt_rect.w = txt_w;
+    txt_rect.h = txt_h;
+
+    txt_rect.x = 30;
+    txt_rect.y = pos.y + 30;
+
+    SDL_Rect txt_background = txt_rect;
+    txt_background.x -= 5;
+    txt_background.y -= 5;
+    txt_background.h += 10;
+    txt_background.w = 300 - 2 * txt_background.x;
+
+    SDL_SetRenderDrawColor(renderer, txt_bg_c.r, txt_bg_c.g, txt_bg_c.b, txt_bg_c.a);
+    SDL_RenderFillRect(renderer, &txt_background);
+
+    SDL_RenderCopy(renderer, txt_texture, NULL, &txt_rect);
+
+    TTF_CloseFont(Categories);
+    TTF_CloseFont(Data);
 }
 
 /**
@@ -121,8 +172,7 @@ void draw_menu(struct Data data, struct windowSize w_size, SDL_Renderer* rendere
     SDL_Rect txt_rect;
 
     TTF_Font * Title = TTF_OpenFont("ubuntu.ttf", 34);
-    TTF_Font * Categories = TTF_OpenFont("ubuntu.ttf", 17);
-    TTF_Font * Data = TTF_OpenFont("ubuntu.ttf", 14);
+    TTF_Font * Copyright = TTF_OpenFont("ubuntu.ttf", 10);
 
     int txt_w;
     int txt_h;
@@ -141,44 +191,16 @@ void draw_menu(struct Data data, struct windowSize w_size, SDL_Renderer* rendere
 
     SDL_RenderCopy(renderer, txt_texture, NULL, &txt_rect);
 
-    txt_surface = TTF_RenderText_Blended(Categories, "Using script:", txt_color);
-    txt_texture = SDL_CreateTextureFromSurface(renderer, txt_surface);
+    SDL_Point pos = {.x = 25, .y = 150};
+    const char * script = data.script;
+    draw_data("Using script:", script, pos, txt_bg_c, txt_color, renderer);
 
-    txt_w = txt_surface->w;
-    txt_h = txt_surface->h;
+    pos.y = 215;
 
-    txt_rect.w = txt_w;
-    txt_rect.h = txt_h;
+    const char * map = data.map;
+    draw_data("Using map:", map, pos, txt_bg_c, txt_color, renderer);
 
-    txt_rect.x = 25;
-    txt_rect.y = 150;
-
-    SDL_RenderCopy(renderer, txt_texture, NULL, &txt_rect);
-
-    txt_surface = TTF_RenderText_Blended(Data, data.script, txt_color);
-    txt_texture = SDL_CreateTextureFromSurface(renderer, txt_surface);
-
-    txt_w = txt_surface->w;
-    txt_h = txt_surface->h;
-
-    txt_rect.w = txt_w;
-    txt_rect.h = txt_h;
-
-    txt_rect.x = 30;
-    txt_rect.y = 180;
-
-    SDL_Rect txt_background = txt_rect;
-    txt_background.x -= 5;
-    txt_background.y -= 5;
-    txt_background.h += 10;
-    txt_background.w = 300 - 2 * txt_background.x;
-
-    SDL_SetRenderDrawColor(renderer, txt_bg_c.r, txt_bg_c.g, txt_bg_c.b, txt_bg_c.a);
-    SDL_RenderFillRect(renderer, &txt_background);
-
-    SDL_RenderCopy(renderer, txt_texture, NULL, &txt_rect);
-
-    txt_surface = TTF_RenderText_Blended(Data, "Gabriel Santamaria", txt_color);
+    txt_surface = TTF_RenderText_Blended(Copyright, "Gabriel Santamaria", txt_color);
     txt_texture = SDL_CreateTextureFromSurface(renderer, txt_surface);
 
     txt_w = txt_surface->w;
@@ -197,6 +219,5 @@ void draw_menu(struct Data data, struct windowSize w_size, SDL_Renderer* rendere
     SDL_DestroyTexture(txt_texture);
 
     TTF_CloseFont(Title);
-    TTF_CloseFont(Categories);
-    TTF_CloseFont(Data);
+    TTF_CloseFont(Copyright);
 }

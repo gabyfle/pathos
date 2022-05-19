@@ -5,14 +5,16 @@
  * 
 **/
 
-#include <stdbool.h>
+#include "map.h"
+
+typedef double weight; // weight of our roads (has to be between 0 and 1: 0: perfect road, 1: a wall)
 
 /**
- * validate_map
- * @brief Determines wether or not a map is valid to be used inside the engine
- * @return int
+ * @brief Draw the map 
+ * 
  */
-int validate_map()
+void draw_map(void)
 {
 
 }
+

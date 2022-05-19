@@ -20,3 +20,4 @@ Colors = {
 }
 
 Script = "scripts/default.lua"
+Map = "maps/default.txt"

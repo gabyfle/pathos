@@ -17,6 +17,7 @@
 #define CONFIG_FILE "config.lua"
 
 char * get_script(lua_State *L);
+char * get_map(lua_State *L);
 
 struct windowSize get_window_size(lua_State *L);
 

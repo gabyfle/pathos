@@ -6,6 +6,7 @@
 **/
 
 #include <SDL2/SDL.h>
+#include <stdbool.h>
 
 #ifndef DEFINES
     #define DEFINES
@@ -16,10 +17,14 @@
         char * txt;
 
         void (*do_click)(void);
+
+        bool pressed;
+        bool hover;
     };
 
     struct Data {
-        char * script;
+        const char * script;
+        const char * map;
     };
 
     struct windowSize {

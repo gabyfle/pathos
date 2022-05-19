@@ -43,7 +43,8 @@ int main(int argc, char *argv [])
     struct windowSize dim = get_window_size(L);
     struct windowColors colors = get_window_colors(L);
 
-    char * script = get_script(L);
+    const char * script = get_script(L);
+    const char * map = get_map(L);
 
     print(1, "Using script: ");
     print(1, script);
@@ -68,7 +69,8 @@ int main(int argc, char *argv [])
         error(L, "An error occurred while trying to create the window: %s", SDL_GetError());
 
     struct Data data = {
-        .script = script
+        .script = script,
+        .map = map
     };
 
     draw_menu(data, dim, renderer);
@@ -84,11 +86,12 @@ int main(int argc, char *argv [])
               (evnt.type == SDL_KEYDOWN && evnt.key.keysym.sym == SDLK_ESCAPE)) { quit = 1; }
 
             for (size_t i = 0; i < buttons_count; i++){ // Looping throught all buttons
-                button_do_click(buttons[i], &evnt);
+                button_do_click(buttons[i], &evnt, renderer);
             }
 
             SDL_RenderPresent(renderer);
         }
+        
     }
     
 

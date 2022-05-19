@@ -5,4 +5,7 @@
  * 
 **/
 
+#include <stdio.h>
+#include <stdlib.h>
+
 void draw_map(void);
