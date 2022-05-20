@@ -1,3 +1,5 @@
+<img src="https://github.com/gabyfle/pathos/blob/sdl/pathos.png" width="640"/>
+
 # About
 
 `pathos` is an attempt to make a system for generating personalized evacuation plans during disasters. At its current state, pathos generate large txt files with data of the personalized evacuation plan for each one of the endangered people.
