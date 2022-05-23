@@ -36,6 +36,7 @@
 
     typedef struct windowColors {
         SDL_Color background;
+        SDL_Color safe;
         SDL_Color walls;
         SDL_Color units;
     } WCOLORS;
@@ -53,5 +54,11 @@
         SDL_Rect dim;
         SDL_Color color;
     } Entity;
+
+    typedef struct pathosState {
+        DATA c_data; // configuration data
+        MAP_DATA * m_data; // map data
+        Entity * entities; // entities of the simulation
+    } State;
 
 #endif

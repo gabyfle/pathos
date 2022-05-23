@@ -39,10 +39,12 @@ int compute_max_size(size_t n_tiles, WSIZE w_size)
  * @param w_size 
  * @param w_colors 
  */
-void draw_map(int map_size, weight map[map_size][map_size], WSIZE w_size, WCOLORS w_colors, SDL_Renderer* renderer)
+void draw_map(MAP_DATA * m_data, WSIZE w_size, WCOLORS w_colors, SDL_Renderer* renderer)
 {
-    int tile_size = compute_tile_size(map_size, w_size);
-    int max_size = compute_max_size(map_size, w_size);
+    weight ** map = m_data->map;
+
+    int tile_size = compute_tile_size(m_data->map_size, w_size);
+    int max_size = compute_max_size(m_data->map_size, w_size);
 
     int start_x = (w_size.width - max_size - 300) / 2 + 300;
     int start_y = (w_size.height - max_size) / 2;
@@ -58,11 +60,22 @@ void draw_map(int map_size, weight map[map_size][map_size], WSIZE w_size, WCOLOR
 
     SDL_RenderFillRect(renderer, &bg_rect);
 
+    SDL_Rect safe_rect = {
+        .w = max_size,
+        .h = m_data->safe_size * tile_size,
+        .x = start_x,
+        .y = start_y
+    };
+
+    SDL_SetRenderDrawColor(renderer, w_colors.safe.r, w_colors.safe.g, w_colors.safe.b, w_colors.safe.a);
+
+    SDL_RenderFillRect(renderer, &safe_rect);
+
     SDL_SetRenderDrawColor(renderer, w_colors.walls.r, w_colors.walls.g, w_colors.walls.b, w_colors.walls.a);
 
-    for (size_t i = 0; i < map_size; i++)
+    for (size_t i = 0; i < m_data->map_size; i++)
     {
-        for (size_t j = 0; j < map_size; j++)
+        for (size_t j = 0; j < m_data->map_size; j++)
         {
             SDL_Rect tile = {
                 .h = tile_size,
@@ -74,12 +87,10 @@ void draw_map(int map_size, weight map[map_size][map_size], WSIZE w_size, WCOLOR
             tile.x += tile_size * j;
             tile.y += tile_size * i;
             
-            if (map[i][j] == (weight) 0)
+            if ((m_data->map[i * m_data->map_size + j] == (weight) 0))
                 SDL_RenderFillRect(renderer, &tile);
         }        
     }
-
-    SDL_RenderPresent(renderer); 
 }
 
 /**
@@ -89,8 +100,10 @@ void draw_map(int map_size, weight map[map_size][map_size], WSIZE w_size, WCOLOR
  * @param w_size 
  * @param w_colors 
  */
-MAP_DATA map_handle(DATA data, WSIZE w_size, WCOLORS w_colors, SDL_Renderer * renderer)
+MAP_DATA * map_handle(DATA data, WSIZE w_size, WCOLORS w_colors)
 {
+    MAP_DATA * m_data = (MAP_DATA *) malloc(sizeof(MAP_DATA));
+
     int map_size;
     int safe_size;
 
@@ -111,21 +124,21 @@ MAP_DATA map_handle(DATA data, WSIZE w_size, WCOLORS w_colors, SDL_Renderer * re
         safe_size = strtol(line, NULL, 10);
 
     // Now we know the exact size of our map so we can create it
-    weight map[map_size][map_size];
+    weight * map = (weight *) malloc(map_size * map_size * sizeof(weight));  
 
     int i = 0;
     while ((read = getline(&line, &len, fp)) != -1) {
-        int j = 0;
         int n = strlen(line);
         for (int j = 0; j < n; j++)
         {
+            int offset = i * map_size + j;
             switch (line[j])
             {
                 case '#':
-                    map[i][j] = (weight) 0.0;
+                    map[offset] = (weight) 0.0;
                     break;
                 case ' ':
-                    map[i][j] = (weight) 1.0;
+                    map[offset] = (weight) 1.0;
                     break;
                 default:
                     break;
@@ -134,16 +147,13 @@ MAP_DATA map_handle(DATA data, WSIZE w_size, WCOLORS w_colors, SDL_Renderer * re
         i++;
     }
 
-    // Now we can draw the map into the screen.
-    draw_map(map_size, map, w_size, w_colors, renderer);
+    m_data->map = map;
+    m_data->map_size = map_size;
+    m_data->safe_size = safe_size;
 
     fclose(fp);
     if (line)
         free(line);
 
-    return (MAP_DATA) {
-        .map_size = map_size,
-        .safe_size = safe_size,
-        .map = map
-    };
+    return m_data;
 }

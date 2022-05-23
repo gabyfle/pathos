@@ -13,5 +13,6 @@
 #include "../defines.h"
 #include "../util.h"
 
-void button_create(struct Button, SDL_Renderer*);
+void button_create(struct Button);
 void button_do_click(struct Button, SDL_Event*, SDL_Renderer*);
+void button_draw(struct Button, SDL_Renderer*);

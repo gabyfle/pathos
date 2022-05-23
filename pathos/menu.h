@@ -12,3 +12,4 @@
 #include "gui.h"
 
 void draw_menu(struct Data, struct windowSize, SDL_Renderer*);
+void init_menu(WSIZE);

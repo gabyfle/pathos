@@ -15,4 +15,5 @@
 #include "util.h"
 
 Entity * create_entities(int);
-void handle_entities(lua_State *, DATA, Entity *, SDL_Renderer *);
+void draw_entities(State * pathos, SDL_Renderer * renderer);
+void handle_entities(lua_State *, State * pathos);

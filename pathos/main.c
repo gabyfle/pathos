@@ -84,16 +84,26 @@ int main(int argc, char *argv [])
         .ents_number = n_ents
     };
 
-    MAP_DATA map_data = map_handle(data, dim, colors, renderer);
-
+    MAP_DATA * m_data = map_handle(data, dim, colors);
     Entity * entities = create_entities(data.ents_number);
-
-    draw_menu(data, dim, renderer);
     
+
+    State pathos = {
+        .c_data = data,
+        .m_data = m_data,
+        .entities = entities
+    };
+
     int quit = 0;
+
+    init_menu(dim);
 
     while(!quit) {
         SDL_Event evnt;
+        
+        draw_map(m_data, dim, colors, renderer);
+        draw_entities(&pathos, renderer);
+        draw_menu(data, dim, renderer);
 
         while(SDL_PollEvent(&evnt)) {
             if(evnt.type == SDL_QUIT || 
@@ -103,19 +113,24 @@ int main(int argc, char *argv [])
             for (size_t i = 0; i < buttons_count; i++){ // Looping throught all buttons
                 button_do_click(buttons[i], &evnt, renderer);
             }
-
-            SDL_RenderPresent(renderer);
         }
+        handle_entities(L, &pathos);
 
-        handle_entities(L, data, entities, renderer);
+        SDL_RenderPresent(renderer);
+        SDL_RenderClear(renderer);
+
+        SDL_Delay(10);
     }
-    
 
     if(renderer != NULL)
         SDL_DestroyRenderer(renderer);
     if (window != NULL)
         SDL_DestroyWindow(window);
     
+    free(entities);
+    free(m_data->map);
+    free(m_data);
+
     lua_close(L);
     SDL_Quit();
     return EXIT_SUCCESS;

@@ -7,6 +7,9 @@
 
 #include "menu.h"
 
+extern int buttons_count;
+extern struct Button buttons[256];
+
 /**
  * @brief Draw the global background color of the pathos main window
  * 
@@ -35,8 +38,6 @@ void menu_background(SDL_Color color, SDL_Color txt_bg_c, int w_height, SDL_Rend
     if(0 != SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a))
         error(NULL, "An error occurred while trying to set a new render color: %s", SDL_GetError());
     SDL_RenderFillRect(renderer, &menu);
-
-    SDL_RenderPresent(renderer);
 }
 
 void close_do_click(void)
@@ -56,7 +57,7 @@ void start_engine(void)
  * 
  * @param renderer 
  */
-void add_gui_elements(int w_height, SDL_Renderer* renderer)
+void add_gui_elements(int w_height)
 {
     SDL_Color red = {.r=220, .g=53, .b=69, .a=255};
     SDL_Color green = {.r=40, .g=167, .b=69, .a=255};
@@ -92,8 +93,8 @@ void add_gui_elements(int w_height, SDL_Renderer* renderer)
         .txt = "Start simulation"
     };
 
-    button_create(start_btn, renderer);
-    button_create(close_btn, renderer);
+    button_create(start_btn);
+    button_create(close_btn);
 }
 
 void draw_data(char * data_title, const char data[], SDL_Point pos, SDL_Color txt_bg_c, SDL_Color txt_color, SDL_Renderer * renderer)
@@ -154,7 +155,7 @@ void draw_data(char * data_title, const char data[], SDL_Point pos, SDL_Color tx
  * @param text_color 
  * @param renderer 
  */
-void draw_menu(struct Data data, struct windowSize w_size, SDL_Renderer* renderer)
+void draw_menu(DATA data, WSIZE w_size, SDL_Renderer* renderer)
 {
     SDL_Color background = {
         .r = 109,
@@ -178,7 +179,6 @@ void draw_menu(struct Data data, struct windowSize w_size, SDL_Renderer* rendere
     };
 
     menu_background(background, txt_bg_c, w_size.height, renderer);
-    add_gui_elements(w_size.height, renderer);
 
     SDL_Rect txt_rect;
 
@@ -225,10 +225,22 @@ void draw_menu(struct Data data, struct windowSize w_size, SDL_Renderer* rendere
 
     SDL_RenderCopy(renderer, txt_texture, NULL, &txt_rect);
 
-    SDL_RenderPresent(renderer);
+    for (size_t i = 0; i < buttons_count; i++)
+        button_draw(buttons[i], renderer);
+
     SDL_FreeSurface(txt_surface);
     SDL_DestroyTexture(txt_texture);
 
     TTF_CloseFont(Title);
     TTF_CloseFont(Copyright);
+}
+
+/**
+ * @brief Initialize the menu before drawing it
+ * 
+ * @param w_size 
+ */
+void init_menu(WSIZE w_size)
+{
+    add_gui_elements(w_size.height);
 }

@@ -176,6 +176,17 @@ WCOLORS get_window_colors(lua_State *L)
 
     lua_pop(L, 1);
 
+    lua_pushstring(L, "safe");
+    lua_gettable(L, -2);
+
+    if (!lua_istable(L, -1))
+        error(L, "The field safe of the Color table should be a valid table but a %s were given.", lua_typename(L, lua_type(L, -1)));
+
+
+    colors.safe = get_color_table(L);
+
+    lua_pop(L, 1);
+
     lua_pushstring(L, "walls");
     lua_gettable(L, -2);
 

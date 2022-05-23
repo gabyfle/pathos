@@ -7,9 +7,10 @@
 -- Function that is applied to each entity, each frame
 -- to determine its movements
 function entity(id)
-    -- pass
+    local d = { {1, 1}, {1, -1}, {-1, 1}, {-1, -1} }
 
-    return { id, 0 }
+
+    return d[math.random(1, #d)]
 end
 
 -- Algorithm to create the escape plan

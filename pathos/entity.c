@@ -8,26 +8,17 @@
 #include "entity.h"
 
 /**
- * @brief Draw a single entity onto the screen renderer
- * 
- * @param entity 
- * @param renderer 
- */
-void draw_entity(Entity entity, SDL_Renderer* renderer)
-{
-    //SDL_SetRenderDrawColor(renderer, entity.color.r, entity.color.g, entity.color.b, entity.color.a);
-    //SDL_RenderFillRect(renderer, &entity.dim);
-}
-
-/**
  * @brief Draw the previously created entities into the screen, using draw_entity
  * 
  * @param renderer 
  */
-void draw_entities(int n, Entity entities[n], SDL_Renderer* renderer)
+void draw_entities(State * pathos, SDL_Renderer* renderer)
 {
-    if (entities[0].color.g == entities[1].color.r)
-        return;
+    for (size_t i = 0; i < pathos->c_data.ents_number; i++)
+    {
+        SDL_SetRenderDrawColor(renderer, pathos->entities[i].color.r, pathos->entities[i].color.g, pathos->entities[i].color.b, pathos->entities[i].color.a);
+        SDL_RenderFillRect(renderer, &pathos->entities[i].dim);
+    }
 }
 
 /**
@@ -37,15 +28,15 @@ void draw_entities(int n, Entity entities[n], SDL_Renderer* renderer)
  */
 Entity * create_entities(int number)
 {
-    Entity entities[number];
+    Entity * entities = (Entity *) malloc(number * sizeof(Entity));
     for (size_t i = 0; i < number; i++)
     {
         entities[i] = (Entity) {
             .dim = {
-                .x = 0,
-                .y = 0,
-                .h = 10,
-                .w = 10
+                .x = 400,
+                .y = 400,
+                .h = 4,
+                .w = 4
             },
             .color = {
                 .r = rand() % 255,
@@ -64,13 +55,13 @@ Entity * create_entities(int number)
  * 
  * @param n_ent : number of entities
  */
-void handle_entities(lua_State * L, DATA data, Entity entities[data.ents_number], SDL_Renderer * renderer)
+void handle_entities(lua_State * L, State * pathos)
 {
-    char * script = data.script;
+    char * script = pathos->c_data.script;
     if (luaL_loadfile(L, script) || lua_pcall(L, 0, 0, 0))
         error(L, "Unable to load script file: %s", lua_tostring(L, -1));
 
-    for (size_t i = 0; i < data.ents_number; i++)
+    for (size_t i = 0; i < pathos->c_data.ents_number; i++)
     {
         lua_getglobal(L, "entity");
         lua_pushnumber(L, (double) i);
@@ -79,12 +70,14 @@ void handle_entities(lua_State * L, DATA data, Entity entities[data.ents_number]
             error(L, "An error occurred while executing 'entity' on entity number %d: %s", i, lua_tostring(L, -1));
 
         lua_rawgeti(L, -1, 1);
-        printf("1 = %d\n", lua_tointeger(L, -1));
-        //printf("1 = %f\n", lua_rawgeti(L, -1, 2));
+        lua_rawgeti(L, -2, 2);
 
-        lua_pop(L, 1);
-        lua_pop(L, 1);
+        int dy = lua_tointeger(L, -1);
+        int dx = lua_tointeger(L, -2);
+
+        pathos->entities[i].dim.x += dx;
+        pathos->entities[i].dim.y += dy;
+
+        lua_pop(L, 3);
     }
-
-    draw_entities(8, create_entities(8), renderer);
 }
