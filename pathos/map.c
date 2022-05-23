@@ -7,8 +7,6 @@
 
 #include "map.h"
 
-typedef double weight; // weight of our roads (has to be between 0 and 1: 0: perfect road, 1: a wall)
-
 /**
  * @brief Computes the maximum size of a tile of the given map
  * 
@@ -16,7 +14,7 @@ typedef double weight; // weight of our roads (has to be between 0 and 1: 0: per
  * @param w_size 
  * @return int 
  */
-int compute_tile_size(size_t n_tiles, struct windowSize w_size)
+int compute_tile_size(size_t n_tiles, WSIZE w_size)
 {
     return (int) floor((w_size.height / n_tiles));
 }
@@ -28,7 +26,7 @@ int compute_tile_size(size_t n_tiles, struct windowSize w_size)
  * @param w_size 
  * @return int 
  */
-int compute_max_size(size_t n_tiles, struct windowSize w_size)
+int compute_max_size(size_t n_tiles, WSIZE w_size)
 {
     int t_size = compute_tile_size(n_tiles, w_size);
     return (int) t_size * n_tiles;
@@ -41,7 +39,7 @@ int compute_max_size(size_t n_tiles, struct windowSize w_size)
  * @param w_size 
  * @param w_colors 
  */
-void draw_map(int map_size, weight map[map_size][map_size], struct windowSize w_size, struct windowColors w_colors, SDL_Renderer* renderer)
+void draw_map(int map_size, weight map[map_size][map_size], WSIZE w_size, WCOLORS w_colors, SDL_Renderer* renderer)
 {
     int tile_size = compute_tile_size(map_size, w_size);
     int max_size = compute_max_size(map_size, w_size);
@@ -91,7 +89,7 @@ void draw_map(int map_size, weight map[map_size][map_size], struct windowSize w_
  * @param w_size 
  * @param w_colors 
  */
-void map_handle(struct Data data, struct windowSize w_size, struct windowColors w_colors, SDL_Renderer * renderer)
+MAP_DATA map_handle(DATA data, WSIZE w_size, WCOLORS w_colors, SDL_Renderer * renderer)
 {
     int map_size;
     int safe_size;
@@ -142,4 +140,10 @@ void map_handle(struct Data data, struct windowSize w_size, struct windowColors 
     fclose(fp);
     if (line)
         free(line);
+
+    return (MAP_DATA) {
+        .map_size = map_size,
+        .safe_size = safe_size,
+        .map = map
+    };
 }

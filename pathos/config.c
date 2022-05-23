@@ -57,10 +57,10 @@ char * get_map(lua_State *L)
  * @param lua_State* L the Lua state
  * @return struct windowSize
  */
-struct windowSize get_window_size(lua_State *L)
+WSIZE get_window_size(lua_State *L)
 {
     int isInt;
-    struct windowSize size;
+    WSIZE size;
 
     if (luaL_loadfile(L, CONFIG_FILE) || lua_pcall(L, 0, 0, 0))
         error(L, "Unable to load config file: %s", lua_tostring(L, -1));
@@ -127,9 +127,9 @@ static SDL_Color get_color_table(lua_State *L)
     return color;
 }
 
-struct windowColors get_window_colors(lua_State *L)
+WCOLORS get_window_colors(lua_State *L)
 {
-    struct windowColors colors;
+    WCOLORS colors;
 
     if (luaL_loadfile(L, CONFIG_FILE) || lua_pcall(L, 0, 0, 0))
         error(L, "Unable to load config file: %s", lua_tostring(L, -1));

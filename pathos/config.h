@@ -19,6 +19,6 @@
 char * get_script(lua_State *L);
 char * get_map(lua_State *L);
 
-struct windowSize get_window_size(lua_State *L);
+WSIZE get_window_size(lua_State *L);
 
-struct windowColors get_window_colors(lua_State *L);
+WCOLORS get_window_colors(lua_State *L);

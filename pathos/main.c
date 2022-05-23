@@ -15,7 +15,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-
 #include "defines.h"
 #include "util.h"
 #include "config.h"
@@ -40,14 +39,17 @@ int main(int argc, char *argv [])
 
     print(1, "Loading configuration files.");
 
-    struct windowSize dim = get_window_size(L);
-    struct windowColors colors = get_window_colors(L);
+    WSIZE dim = get_window_size(L);
+    WCOLORS colors = get_window_colors(L);
 
     const char * script = get_script(L);
     const char * map = get_map(L);
 
     print(1, "Using script: ");
     print(1, script);
+
+    print(1, "Using map:");
+    print(1, map);
 
     print(2, "Configuration loaded!");
 
@@ -68,12 +70,12 @@ int main(int argc, char *argv [])
     if (window == NULL || renderer == NULL)
         error(L, "An error occurred while trying to create the window: %s", SDL_GetError());
 
-    struct Data data = {
+    DATA data = {
         .script = script,
         .map = map
     };
 
-    map_handle(data, dim, colors, renderer);
+    MAP_DATA map_data = map_handle(data, dim, colors, renderer);
     draw_menu(data, dim, renderer);
     
     int quit = 0;
