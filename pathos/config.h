@@ -16,9 +16,10 @@
 
 #define CONFIG_FILE "config.lua"
 
-char * get_script(lua_State *L);
-char * get_map(lua_State *L);
+char * get_script(lua_State *);
+char * get_map(lua_State *);
+int get_ents_number(lua_State *);
 
-WSIZE get_window_size(lua_State *L);
+WSIZE get_window_size(lua_State *);
 
-WCOLORS get_window_colors(lua_State *L);
+WCOLORS get_window_colors(lua_State *);

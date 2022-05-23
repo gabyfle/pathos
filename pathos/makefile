@@ -1,9 +1,12 @@
-engine: main.o map.o menu.o button.o config.o util.o
-	gcc -o engine main.o map.o menu.o button.o config.o util.o -llua5.4 -lSDL2main -lSDL2 -lSDL2_ttf
+engine: main.o entity.o map.o menu.o button.o config.o util.o
+	gcc -g -o engine main.o entity.o map.o menu.o button.o config.o util.o -llua5.4 -lSDL2main -lSDL2 -lSDL2_ttf
 	rm -f *.o *~
 
 main.o: main.c
 	gcc -c -Wall main.c -llua5.4 -lSDL2main -lSDL2
+
+entity.o: entity.c
+	gcc -c -Wall entity.c -llua5.4 -lSDL2main -lSDL2
 
 map.o: map.c
 	gcc -c -Wall map.c

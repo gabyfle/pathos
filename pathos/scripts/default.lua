@@ -6,12 +6,12 @@
 
 -- Function that is applied to each entity, each frame
 -- to determine its movements
-local function entity(id)
+function entity(id)
     -- pass
 
-    return { 0, 0 }
+    return { id, 0 }
 end
 
 -- Algorithm to create the escape plan
-local function algorithm()
+function algorithm()
 end

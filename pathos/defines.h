@@ -26,6 +26,7 @@
     typedef struct Data {
         const char * script;
         const char * map;
+        const int ents_number;
     } DATA;
 
     typedef struct windowSize {
@@ -47,5 +48,10 @@
 
         weight * map;
     } MAP_DATA;
+
+    typedef struct entity {
+        SDL_Rect dim;
+        SDL_Color color;
+    } Entity;
 
 #endif

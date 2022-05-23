@@ -19,5 +19,6 @@ Colors = {
     units = {0, 0, 255, 255}
 }
 
+Entities = 100
 Script = "scripts/default.lua"
 Map = "maps/default.txt"

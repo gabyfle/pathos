@@ -31,7 +31,7 @@ char * get_script(lua_State *L)
 
 /**
  * get_map
- * Gets the simulation map that we should use for the engine
+ * @brief Gets the simulation map that we should use for the engine
  * @param lua_State* L the Lua state
  * @return char*
  */
@@ -52,8 +52,30 @@ char * get_map(lua_State *L)
 }
 
 /**
+ * @brief Get the ents number from config file
+ * 
+ * @param L lua state
+ * @return int 
+ */
+int get_ents_number(lua_State *L)
+{
+    int n_ents;
+
+    if (luaL_loadfile(L, CONFIG_FILE) || lua_pcall(L, 0, 0, 0))
+        error(L, "Unable to load config file: %s", lua_tostring(L, -1));
+
+    lua_getglobal(L, "Entities");
+    if (!lua_isstring(L, -1))
+        error(L, "Entities is a %s but a number were expected. Please, see manual to have a proper config file.", lua_typename(L, lua_type(L, -1)));
+
+    n_ents = lua_tointeger(L, -1);
+
+    return n_ents;
+}
+
+/**
  * get_window_size
- * Gets the Window size from the configuration file (config.lua) and returns it inside a struct
+ * @brief Gets the Window size from the configuration file (config.lua) and returns it inside a struct
  * @param lua_State* L the Lua state
  * @return struct windowSize
  */
@@ -92,7 +114,7 @@ WSIZE get_window_size(lua_State *L)
 
 /**
  * get_color_table
- * Gets the color table from the latest variable pushed onto the Lua stack
+ * @brief Gets the color table from the latest variable pushed onto the Lua stack
  * We assume that this variable is a valid color table
  * @return SDL_Color
  */
@@ -127,6 +149,12 @@ static SDL_Color get_color_table(lua_State *L)
     return color;
 }
 
+/**
+ * @brief Get the window colors
+ * 
+ * @param L 
+ * @return WCOLORS 
+ */
 WCOLORS get_window_colors(lua_State *L)
 {
     WCOLORS colors;

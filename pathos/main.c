@@ -15,6 +15,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+
+#include <time.h>
+
 #include "defines.h"
 #include "util.h"
 #include "config.h"
@@ -24,6 +27,8 @@
 
 #include "map.h"
 
+#include "entity.h"
+
 extern int buttons_count;
 extern struct Button buttons[256];
 
@@ -31,6 +36,8 @@ int main(int argc, char *argv [])
 {
     lua_State *L = luaL_newstate();
     luaL_openlibs(L);
+
+    srand(time(NULL));
 
     SDL_Init(SDL_INIT_VIDEO);
     TTF_Init();
@@ -44,6 +51,7 @@ int main(int argc, char *argv [])
 
     const char * script = get_script(L);
     const char * map = get_map(L);
+    const int n_ents = get_ents_number(L);
 
     print(1, "Using script: ");
     print(1, script);
@@ -72,10 +80,14 @@ int main(int argc, char *argv [])
 
     DATA data = {
         .script = script,
-        .map = map
+        .map = map,
+        .ents_number = n_ents
     };
 
     MAP_DATA map_data = map_handle(data, dim, colors, renderer);
+
+    Entity * entities = create_entities(data.ents_number);
+
     draw_menu(data, dim, renderer);
     
     int quit = 0;
@@ -94,6 +106,8 @@ int main(int argc, char *argv [])
 
             SDL_RenderPresent(renderer);
         }
+
+        handle_entities(L, data, entities, renderer);
     }
     
 
