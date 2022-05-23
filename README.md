@@ -1,4 +1,6 @@
-<img src="https://github.com/gabyfle/pathos/blob/sdl/pathos.png" width="640"/>
+<div align = "center">
+  <img src="https://github.com/gabyfle/pathos/blob/sdl/pathos.png" width="640"/>
+</div>
 
 # About
 
