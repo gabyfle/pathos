@@ -7,9 +7,7 @@
 -- Function that is applied to each entity, each frame
 -- to determine its movements
 function entity(id)
-    local d = { {1, 1}, {1, -1}, {-1, 1}, {-1, -1} }
-
-
+    local d = { {1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1} }
     return d[math.random(1, #d)]
 end
 

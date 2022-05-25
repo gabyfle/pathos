@@ -44,8 +44,11 @@
     typedef double weight; // weight of our roads (has to be between 0 and 1: 0: perfect road, 1: a wall)
 
     typedef struct mapData {
+        int tile_size; // size of a tile in pixels
         int map_size; // size of the map in tiles
         int safe_size; // safe area size of the map, in tiles
+
+        SDL_Point screen_pos; // position of the left corner on the screen
 
         weight * map;
     } MAP_DATA;

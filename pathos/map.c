@@ -42,12 +42,7 @@ int compute_max_size(size_t n_tiles, WSIZE w_size)
 void draw_map(MAP_DATA * m_data, WSIZE w_size, WCOLORS w_colors, SDL_Renderer* renderer)
 {
     weight ** map = m_data->map;
-
-    int tile_size = compute_tile_size(m_data->map_size, w_size);
     int max_size = compute_max_size(m_data->map_size, w_size);
-
-    int start_x = (w_size.width - max_size - 300) / 2 + 300;
-    int start_y = (w_size.height - max_size) / 2;
 
     SDL_SetRenderDrawColor(renderer, w_colors.background.r, w_colors.background.g, w_colors.background.b, w_colors.background.a);
 
@@ -62,9 +57,9 @@ void draw_map(MAP_DATA * m_data, WSIZE w_size, WCOLORS w_colors, SDL_Renderer* r
 
     SDL_Rect safe_rect = {
         .w = max_size,
-        .h = m_data->safe_size * tile_size,
-        .x = start_x,
-        .y = start_y
+        .h = m_data->safe_size * m_data->tile_size,
+        .x = m_data->screen_pos.x,
+        .y = m_data->screen_pos.y
     };
 
     SDL_SetRenderDrawColor(renderer, w_colors.safe.r, w_colors.safe.g, w_colors.safe.b, w_colors.safe.a);
@@ -78,17 +73,18 @@ void draw_map(MAP_DATA * m_data, WSIZE w_size, WCOLORS w_colors, SDL_Renderer* r
         for (size_t j = 0; j < m_data->map_size; j++)
         {
             SDL_Rect tile = {
-                .h = tile_size,
-                .w = tile_size,
+                .h = m_data->tile_size,
+                .w = m_data->tile_size,
         
-                .x = start_x,
-                .y = start_y
+                .x = m_data->screen_pos.x,
+                .y = m_data->screen_pos.y
             };
-            tile.x += tile_size * j;
-            tile.y += tile_size * i;
+            tile.x += m_data->tile_size * j;
+            tile.y += m_data->tile_size * i;
             
-            if ((m_data->map[i * m_data->map_size + j] == (weight) 0))
+            if ((m_data->map[i * m_data->map_size + j] == (weight) 0)) {
                 SDL_RenderFillRect(renderer, &tile);
+            }
         }        
     }
 }
@@ -123,6 +119,12 @@ MAP_DATA * map_handle(DATA data, WSIZE w_size, WCOLORS w_colors)
     if ((read = getline(&line, &len, fp)) != -1)
         safe_size = strtol(line, NULL, 10);
 
+    int tile_size = compute_tile_size(map_size, w_size);
+    int max_size = compute_max_size(map_size, w_size);
+
+    int start_x = (w_size.width - max_size - 300) / 2 + 300;
+    int start_y = (w_size.height - max_size) / 2;
+
     // Now we know the exact size of our map so we can create it
     weight * map = (weight *) malloc(map_size * map_size * sizeof(weight));  
 
@@ -147,6 +149,8 @@ MAP_DATA * map_handle(DATA data, WSIZE w_size, WCOLORS w_colors)
         i++;
     }
 
+    m_data->tile_size = tile_size;
+    m_data->screen_pos = (SDL_Point) { .x = start_x, .y = start_y };
     m_data->map = map;
     m_data->map_size = map_size;
     m_data->safe_size = safe_size;

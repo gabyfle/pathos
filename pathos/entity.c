@@ -33,8 +33,8 @@ Entity * create_entities(int number)
     {
         entities[i] = (Entity) {
             .dim = {
-                .x = 400,
-                .y = 400,
+                .x = 1000,
+                .y = 210,
                 .h = 4,
                 .w = 4
             },
@@ -48,6 +48,44 @@ Entity * create_entities(int number)
     }
 
     return entities;
+}
+
+/**
+ * @brief Computes the number of the tile
+ * 
+ * @param m_data 
+ * @param pos 
+ * @return int : an int under the form i * map_size + j where (i, j) € N
+ */
+int compute_tile(MAP_DATA * m_data, SDL_Point pos)
+{
+    int dx = (pos.x - m_data->screen_pos.x);
+    int dy = (pos.y - m_data->screen_pos.y);
+
+    if (dx < 0 || dx > m_data->tile_size * m_data->map_size)
+        error(NULL, "A particle is outside the map, aborting.");
+    if (dx < 0 || dx > m_data->tile_size * m_data->map_size)
+        error(NULL, "A particle is outside the map, aborting.");
+
+    return (dy / m_data->tile_size) * m_data->map_size + (dx / m_data->tile_size);
+}
+
+/**
+ * @brief Computes whether or not the entity can move throught dx, dy
+ * 
+ * @param m_data 
+ * @param ent_pos 
+ * @param dx 
+ * @param dy 
+ * @return true : the particle is able to move (it's not a wall, or the weight is enought)
+ * @return false : the particle can't move that way (it's a wall, or the weight isn't enought)
+ */
+bool can_move(MAP_DATA * m_data, SDL_Point ent_pos, int dx, int dy)
+{
+    SDL_Point new_pos = { .x = ent_pos.x + dx, .y = ent_pos.y + dy };
+    int n_tile = compute_tile(m_data, new_pos);
+
+    return m_data->map[n_tile] > 0;
 }
 
 /**
@@ -75,8 +113,10 @@ void handle_entities(lua_State * L, State * pathos)
         int dy = lua_tointeger(L, -1);
         int dx = lua_tointeger(L, -2);
 
-        pathos->entities[i].dim.x += dx;
-        pathos->entities[i].dim.y += dy;
+        if (can_move(pathos->m_data, (SDL_Point) {.x = pathos->entities[i].dim.x +dx, .y = pathos->entities[i].dim.y +dy}, dx, dy)) {
+            pathos->entities[i].dim.x += dx;
+            pathos->entities[i].dim.y += dy;
+        }
 
         lua_pop(L, 3);
     }
