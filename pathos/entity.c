@@ -113,7 +113,10 @@ void handle_entities(lua_State * L, State * pathos)
         int dy = lua_tointeger(L, -1);
         int dx = lua_tointeger(L, -2);
 
-        if (can_move(pathos->m_data, (SDL_Point) {.x = pathos->entities[i].dim.x +dx, .y = pathos->entities[i].dim.y +dy}, dx, dy)) {
+        SDL_Point pos = {.x = pathos->entities[i].dim.x, .y = pathos->entities[i].dim.y};
+
+        if (can_move(pathos->m_data,  pos, dx, dy)) {
+            pathos->entities[i].tile_id = compute_tile(pathos->m_data, pos);
             pathos->entities[i].dim.x += dx;
             pathos->entities[i].dim.y += dy;
         }

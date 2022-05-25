@@ -9,7 +9,9 @@
 
 #include "api.h"
 
+DATA * data;
 MAP_DATA * m_data;
+Entity * entities;
 
 /**
  * @brief Returns the size of the safe area
@@ -43,8 +45,8 @@ static int lua_get_map_size(lua_State * L)
  */
 static int lua_get_map_weight(lua_State * L)
 {
-    double i = luaL_checknumber(L, 1);
-    double j = luaL_checkinteger(L, 2);
+    int i = luaL_checkinteger(L, 1);
+    int j = luaL_checkinteger(L, 2);
 
     if (i < 0 || i > m_data->map_size)
         luaL_error(L, "Parameter i must be between %d and %d", 0, m_data->map_size);
@@ -58,4 +60,61 @@ static int lua_get_map_weight(lua_State * L)
     lua_pushnumber(L, (double) w);
 
     return 1;
+}
+
+/**
+ * @brief Returns the number of entities in the simulation
+ * 
+ * @param L 
+ * @return int 
+ */
+static int lua_get_entity_number(lua_State * L)
+{
+    lua_pushinteger(L, data->ents_number);
+    return 1;
+}
+
+/**
+ * @brief Returns the tiles number where the entity is.
+ * 
+ * @param L 
+ * @return int 
+ */
+static int lua_get_entity_pos(lua_State * L)
+{
+    int id = luaL_checkinteger(L, 1);
+
+    if (id > data->ents_number || 0 > id)
+        luaL_error(L, "Entity number %d doens't exist.", id);
+
+    lua_pushnumber(L, entities[id].tile_id);
+    return 1;   
+}
+
+/**
+ * @brief Initialize the Lua API.
+ * 
+ * @param map_data 
+ */
+void init_api(lua_State * L, DATA * d, MAP_DATA * map_data, Entity * ents)
+{
+    print(1, "Initializing the Lua API.");
+
+    m_data = map_data;
+    data = d;
+    entities = ents;
+
+    lua_pushcfunction(L, lua_get_map_size);
+    lua_setglobal(L, "map_size");
+
+    lua_pushcfunction(L, lua_get_safe_size);
+    lua_setglobal(L, "safe_size");
+
+    lua_pushcfunction(L, lua_get_map_weight);
+    lua_setglobal(L, "weight");
+
+    lua_pushcfunction(L, lua_get_entity_pos);
+    lua_setglobal(L, "ent_pos");
+
+    print(2, "Lua API initialized.");
 }

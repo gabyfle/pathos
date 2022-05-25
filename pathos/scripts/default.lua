@@ -8,6 +8,9 @@
 -- to determine its movements
 function entity(id)
     local d = { {1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1} }
+
+    local s = weight(20, 4)
+
     return d[math.random(1, #d)]
 end
 

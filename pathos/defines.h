@@ -56,6 +56,8 @@
     typedef struct entity {
         SDL_Rect dim;
         SDL_Color color;
+        
+        int tile_id; // id of the tile were the ent iss
     } Entity;
 
     typedef struct pathosState {

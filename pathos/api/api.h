@@ -11,4 +11,4 @@
 #include <lua5.4/lauxlib.h>
 #include <lua5.4/lualib.h>
 
-
+void init_api(lua_State *, DATA *, MAP_DATA *, Entity *);

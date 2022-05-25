@@ -26,6 +26,7 @@
 #include "menu.h"
 
 #include "map.h"
+#include "api/api.h"
 
 #include "entity.h"
 
@@ -41,6 +42,7 @@ int main(int argc, char *argv [])
 
     SDL_Init(SDL_INIT_VIDEO);
     TTF_Init();
+
     SDL_Window *window;
     SDL_Renderer *renderer;
 
@@ -85,8 +87,10 @@ int main(int argc, char *argv [])
     };
 
     MAP_DATA * m_data = map_handle(data, dim, colors);
+
     Entity * entities = create_entities(data.ents_number);
     
+    init_api(L, &data, m_data, entities);
 
     State pathos = {
         .c_data = data,
