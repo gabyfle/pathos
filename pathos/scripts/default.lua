@@ -22,7 +22,7 @@ function spawn(id, pos)
         return false or math.random() > 0.999
     end
 
-    return true
+    return math.random() >= 0.09
 end
 
 -- Function that is applied to each entity, each frame

@@ -33,6 +33,54 @@
 extern int buttons_count;
 extern struct Button buttons[256];
 
+/**
+ * @brief Create a very simple loading screen
+ * 
+ * @param window 
+ * @param renderer 
+ */
+void draw_loading_screen(int width, int height, SDL_Renderer * renderer)
+{
+    TTF_Font * Ubuntu = TTF_OpenFont("ubuntu.ttf", 50);
+    const SDL_Color white = { .r = 255, .g = 255, .b = 255, .a = 255 };
+
+    SDL_Rect background = {
+        .x = 0,
+        .y = 0,
+        .w = width,
+        .h = height
+    };
+
+    SDL_SetRenderDrawColor(renderer, 109, 59, 109, 255);
+    SDL_RenderFillRect(renderer, &background);
+
+    SDL_Rect txt_rect = background;
+
+    int txt_w;
+    int txt_h;
+
+    SDL_Surface* txt_surface = TTF_RenderText_Blended(Ubuntu, "Loading...", white); 
+    SDL_Texture* txt_texture = SDL_CreateTextureFromSurface(renderer, txt_surface);
+
+    txt_w = txt_surface->w;
+    txt_h = txt_surface->h;
+
+    txt_rect.w = txt_w;
+    txt_rect.h = txt_h;
+
+    txt_rect.x = abs(width - txt_rect.w) / 2;
+    txt_rect.y = abs(height - txt_rect.h) / 2;
+
+    SDL_RenderCopy(renderer, txt_texture, NULL, &txt_rect);
+
+    SDL_FreeSurface(txt_surface);
+    SDL_DestroyTexture(txt_texture);
+
+    TTF_CloseFont(Ubuntu);
+
+    SDL_RenderPresent(renderer);
+}
+
 int main(int argc, char *argv [])
 {
     lua_State *L = luaL_newstate();
@@ -79,6 +127,8 @@ int main(int argc, char *argv [])
 
     if (window == NULL || renderer == NULL)
         error(L, "An error occurred while trying to create the window: %s", SDL_GetError());
+
+    draw_loading_screen(dim.width, dim.height, renderer);
 
     DATA data = {
         .script = script,

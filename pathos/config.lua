@@ -20,6 +20,6 @@ Colors = {
     units = {0, 0, 255, 255}
 }
 
-Entities = 10000
+Entities = 32000
 Script = "scripts/default.lua"
 Map = "maps/default.txt"
