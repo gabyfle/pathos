@@ -41,10 +41,11 @@ print(string.format("Size of the safe area: %d", ss))
 Example:
 ```lua
 local m_size = map_size() -- we get the size of the map
-local w = weight(i, j)
 
 local i = math.random(1, m_size)
 local j = math.random(1, m_size)
+
+local w = weight(i, j)
 
 print(string.format("Weight of tile (%d, %d): %f", i, j, w))
 ```

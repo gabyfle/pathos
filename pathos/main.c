@@ -88,9 +88,14 @@ int main(int argc, char *argv [])
 
     MAP_DATA * m_data = map_handle(data, dim, colors);
 
-    Entity * entities = create_entities(data.ents_number);
-    
-    init_api(L, &data, m_data, entities);
+    init_api(L, &data, m_data);
+
+    if (luaL_loadfile(L, script) || lua_pcall(L, 0, 0, 0))
+        error(L, "Unable to load script file: %s", lua_tostring(L, -1));
+
+    Entity * entities = create_entities(L, m_data, data.ents_number);
+
+    init_ents_api(L, entities);
 
     State pathos = {
         .c_data = data,

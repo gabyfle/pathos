@@ -38,6 +38,18 @@ static int lua_get_map_size(lua_State * L)
 }
 
 /**
+ * @brief Returns the size of a tile in pixels
+ * 
+ * @param L 
+ * @return int 
+ */
+static int lua_get_tile_size(lua_State * L)
+{
+    lua_pushinteger(L, m_data->tile_size);
+    return 1;
+}
+
+/**
  * @brief Returns weight(i, j)
  * 
  * @param L 
@@ -96,13 +108,15 @@ static int lua_get_entity_pos(lua_State * L)
  * 
  * @param map_data 
  */
-void init_api(lua_State * L, DATA * d, MAP_DATA * map_data, Entity * ents)
+void init_api(lua_State * L, DATA * d, MAP_DATA * map_data)
 {
     print(1, "Initializing the Lua API.");
 
     m_data = map_data;
     data = d;
-    entities = ents;
+
+    lua_pushcfunction(L, lua_get_tile_size);
+    lua_setglobal(L, "tile_size");
 
     lua_pushcfunction(L, lua_get_map_size);
     lua_setglobal(L, "map_size");
@@ -113,8 +127,21 @@ void init_api(lua_State * L, DATA * d, MAP_DATA * map_data, Entity * ents)
     lua_pushcfunction(L, lua_get_map_weight);
     lua_setglobal(L, "weight");
 
-    lua_pushcfunction(L, lua_get_entity_pos);
-    lua_setglobal(L, "ent_pos");
+    lua_pushcfunction(L, lua_get_entity_number);
+    lua_setglobal(L, "ents_number");    
 
     print(2, "Lua API initialized.");
+}
+
+/**
+ * @brief ENtities Lua API initialization
+ * 
+ * @param ents 
+ */
+void init_ents_api(lua_State * L, Entity * ents)
+{
+    entities = ents;
+
+    lua_pushcfunction(L, lua_get_entity_pos);
+    lua_setglobal(L, "ent_pos");
 }

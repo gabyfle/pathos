@@ -26,25 +26,75 @@ void draw_entities(State * pathos, SDL_Renderer* renderer)
  * 
  * @param number number of entity to create
  */
-Entity * create_entities(int number)
+Entity * create_entities(lua_State * L, MAP_DATA * m_data, int number)
 {
     Entity * entities = (Entity *) malloc(number * sizeof(Entity));
-    for (size_t i = 0; i < number; i++)
+    int m_size = m_data->map_size;
+    bool spawned = false;
+    int nspawn = 0;
+
+    for (size_t id = 0; id < number; id++)
     {
-        entities[i] = (Entity) {
-            .dim = {
-                .x = 1000,
-                .y = 210,
-                .h = 4,
-                .w = 4
-            },
-            .color = {
-                .r = rand() % 255,
-                .g = rand() % 255,
-                .b = rand() % 255,
-                .a = 255
+        for (size_t j = 0; j < m_size; j++)
+        {
+            if (spawned)
+                break;
+
+            for (size_t k = 0; k < m_size; k++)
+            {
+                if (spawned)
+                    break;
+
+                lua_getglobal(L, "spawn");
+                lua_pushnumber(L, (double) id);
+
+                lua_newtable(L);
+                {
+                    lua_pushnumber(L, 1);
+                    lua_pushnumber(L, j);
+                    lua_settable(L, -3);
+
+                    lua_pushnumber(L, 2);
+                    lua_pushnumber(L, k);
+                    lua_settable(L, -3);
+                }
+
+                if (lua_pcall(L, 2, 1, 0) != LUA_OK)
+                    error(L, "An error occurred while executing 'spawn' on entity number %d: %s", id, lua_tostring(L, -1));
+
+                int can_spawn = lua_toboolean(L, -1);
+                lua_pop(L, 1);
+
+                if (!can_spawn)
+                    continue;
+
+                entities[id] = (Entity) {
+                    .dim = {
+                        .x = m_data->screen_pos.x + j * m_data->tile_size,
+                        .y = m_data->screen_pos.y + k * m_data->tile_size,
+                        .h = 4,
+                        .w = 4
+                    },
+                    .color = {
+                        .r = rand() % 255,
+                        .g = rand() % 255,
+                        .b = rand() % 255,
+                        .a = 255
+                    }
+                };
+
+                spawned = true;
+                nspawn++;
+
+                break;
             }
-        };
+        }
+
+        spawned = false;
+    }
+
+    if (nspawn < number){
+        error(L, "An error has occurred while trying to spawn entities: not every entity was able to spawn. Fix your 'spawn' script.");
     }
 
     return entities;
@@ -62,10 +112,10 @@ int compute_tile(MAP_DATA * m_data, SDL_Point pos)
     int dx = (pos.x - m_data->screen_pos.x);
     int dy = (pos.y - m_data->screen_pos.y);
 
-    if (dx < 0 || dx > m_data->tile_size * m_data->map_size)
-        error(NULL, "A particle is outside the map, aborting.");
-    if (dx < 0 || dx > m_data->tile_size * m_data->map_size)
-        error(NULL, "A particle is outside the map, aborting.");
+    //if (dx < 0 || dx > m_data->tile_size * m_data->map_size)
+    //    error(NULL, "A particle is outside the map, aborting.");
+    //if (dx < 0 || dx > m_data->tile_size * m_data->map_size)
+    //    error(NULL, "A particle is outside the map, aborting.");
 
     return (dy / m_data->tile_size) * m_data->map_size + (dx / m_data->tile_size);
 }
@@ -95,10 +145,6 @@ bool can_move(MAP_DATA * m_data, SDL_Point ent_pos, int dx, int dy)
  */
 void handle_entities(lua_State * L, State * pathos)
 {
-    char * script = pathos->c_data.script;
-    if (luaL_loadfile(L, script) || lua_pcall(L, 0, 0, 0))
-        error(L, "Unable to load script file: %s", lua_tostring(L, -1));
-
     for (size_t i = 0; i < pathos->c_data.ents_number; i++)
     {
         lua_getglobal(L, "entity");
