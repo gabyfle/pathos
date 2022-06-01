@@ -66,8 +66,6 @@ void draw_map(MAP_DATA * m_data, WSIZE w_size, WCOLORS w_colors, SDL_Renderer* r
 
     SDL_RenderFillRect(renderer, &safe_rect);
 
-    SDL_SetRenderDrawColor(renderer, w_colors.walls.r, w_colors.walls.g, w_colors.walls.b, w_colors.walls.a);
-
     for (size_t i = 0; i < m_data->map_size; i++)
     {
         for (size_t j = 0; j < m_data->map_size; j++)
@@ -82,7 +80,9 @@ void draw_map(MAP_DATA * m_data, WSIZE w_size, WCOLORS w_colors, SDL_Renderer* r
             tile.x += m_data->tile_size * j;
             tile.y += m_data->tile_size * i;
             
-            if ((m_data->map[i * m_data->map_size + j] == (weight) 0)) {
+            weight w = m_data->map[i * m_data->map_size + j];
+            if ((w < (weight) 1)) {
+                SDL_SetRenderDrawColor(renderer, 255 - (int) (w * 10), 255 - (int) (w * 140), (int) (255 * (1 - w)), 255);
                 SDL_RenderFillRect(renderer, &tile);
             }
         }        
@@ -141,6 +141,11 @@ MAP_DATA * map_handle(DATA data, WSIZE w_size, WCOLORS w_colors)
                     break;
                 case ' ':
                     map[offset] = (weight) 1.0;
+                    break;
+                case '.':
+                    map[offset] = (weight) 0.75;
+                    break;
+                case ':': map[offset] = (weight) 0.25;
                     break;
                 default:
                     break;

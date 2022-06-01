@@ -4,7 +4,7 @@
 -- Gabriel Santamaria - 2022
 ---
 
-local entsByLine = math.floor(ents_number() / map_size()) + ents_number() % map_size()
+local entsByLine = math.floor(ents_number() / map_size()) + map_size()
 
 -- Function that handles the spawning of the elements
 -- This function spawn entities homogeneously on the whole map
@@ -16,10 +16,10 @@ function spawn(id, pos)
 
     if w <= 0 then return false end
     if (id // line >= entsByLine) then
-        return false or math.random() > 0.999
+        return math.random() > 0.999
     end
     if (id // row >= entsByLine) then
-        return false or math.random() > 0.999
+        return math.random() > 0.999
     end
 
     return math.random() >= 0.09
@@ -33,5 +33,7 @@ function entity(id)
 end
 
 -- Algorithm to create the escape plan
+-- Here, we implemented the Dijkstra Algorithm to create the escape plan
 function algorithm()
+
 end

@@ -9,8 +9,8 @@
 -----------------------------------------]]
 
 Window = {
-    height = 900,
-    width  = 1600
+    height = 720,
+    width  = 1280
 }
 
 Colors = {
@@ -20,6 +20,6 @@ Colors = {
     units = {0, 0, 255, 255}
 }
 
-Entities = 32000
+Entities = 2000
 Script = "scripts/default.lua"
 Map = "maps/default.txt"
