@@ -128,7 +128,10 @@ void init_api(lua_State * L, DATA * d, MAP_DATA * map_data)
     lua_setglobal(L, "weight");
 
     lua_pushcfunction(L, lua_get_entity_number);
-    lua_setglobal(L, "ents_number");    
+    lua_setglobal(L, "ents_number");
+
+    if (luaL_loadfile(L, "api/api.lua") || lua_pcall(L, 0, 0, 0))
+        error(L, "Unable to load script file: %s", lua_tostring(L, -1)); 
 
     print(2, "Lua API initialized.");
 }
