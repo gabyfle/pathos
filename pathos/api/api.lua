@@ -12,20 +12,27 @@ function pathos.getMapGraph()
         for j = 1, n do
             if not (weight(i, j) > 0) then goto continue end -- we got a wall here
             local neighbours = {
-                weight(i-1, j),
-                weight(i, j-1),
-                weight(i, j+1),
-                weight(i+1, j)
+                { i-1, j, weight(i-1, j) },
+                { i, j-1, weight(i, j-1) },
+                { i, j+1, weight(i, j+1) },
+                { i+1, j, weight(i+1, j) }
             }
 
             -- Nodes id are in the form of (i * map_size + j)
 
-            for id, w in pairs(neighbours) do
-                if (w > 0) then
-                    g:addEdge(i * n + j, id)
+            for _, w in pairs(neighbours) do
+                if (w[3] > 0) then
+                    g:addEdge(i * n + j, w[1] * n + w[2])
                 end
             end
         end
+    end
+
+    -- Now we can try to delete useless nodes so that processing the graph
+    -- will be much quicker
+
+    for k, value in pairs(g:) do
+        
     end
 
     return g

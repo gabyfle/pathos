@@ -110,6 +110,35 @@ function Graph:new(n)
     return obj
 end
 
+--- Graph:getNodes()
+-- @brief Returns the graph's nodes
+function Graph:getNodes()
+    return self.nodes
+end
+
+--- Graph:getNode()
+-- @brief Returns the node of the given id
+-- @param id: id of the node
+function Graph:getNode(id)
+    return self.nodes[id]
+end
+
+--- Graph:removeNode(id)
+-- @brief Removes safely a node from the graph (by reconstructing a nice graph)
+-- @param id: id of the node to remove
+function Graph:removeNode(id)
+    if not self.nodes[id] then error("Nodes doesn't exist.", 2) end
+
+    local node = self:getNode(id)
+
+    for i, v in ipairs(self.nodes) do
+        if i == id then self.nodes[id] = nil end
+        for j, n in pairs(v:getNeighbours()) do
+            if n == node then n.neighbours[j] = nil end -- we're deleting it from the neighbours of other nodes
+        end
+    end
+end
+
 --- Graph:addEdge(n, m, weight, bi)
 -- @brief Adds a new edge to the graph
 -- @param n: starting node id
