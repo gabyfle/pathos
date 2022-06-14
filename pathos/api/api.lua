@@ -31,8 +31,10 @@ function pathos.getMapGraph()
     -- Now we can try to delete useless nodes so that processing the graph
     -- will be much quicker
 
-    for k, value in pairs(g:) do
-        
+    for k, node in pairs(g:getNodes()) do
+        if true then
+            
+        end
     end
 
     return g
