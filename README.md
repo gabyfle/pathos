@@ -1,10 +1,11 @@
+**This project was initially made for my preparatory school "TIPE" project and is not anymore maintened nor developed. This is a public archive.**
+
+
 <div align = "center">
   <img src="https://github.com/gabyfle/pathos/blob/sdl/pathos.png" width="640"/>
 </div>
 
 # About
-
-This project was initially made for my preparatory school "TIPE" project and is not anymore maintened nor developed. This is a public archive.
 
 `pathos` is an attempt to make a system for generating personalized evacuation plans during disasters. At its current state, pathos generate large txt files with data of the personalized evacuation plan for each one of the endangered people.
 
